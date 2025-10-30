@@ -1,0 +1,83 @@
+.about {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding: 2rem 0;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px;
+}
+
+.about-header h1 {
+  font-size: 2.5rem;
+  margin: 0;
+}
+
+.about-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.about-section {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.about-section h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1rem;
+  color: #667eea;
+}
+
+.about-section p {
+  line-height: 1.8;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.about-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.about-section li {
+  padding: 0.5rem 0;
+  padding-left: 2rem;
+  position: relative;
+  color: #333;
+}
+
+.about-section li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.4);
+}
