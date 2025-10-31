@@ -5,6 +5,7 @@ A complete CRUD (Create, Read, Update, Delete) application demonstrating the cap
 ## Features
 
 ### Backend (Express Server)
+
 - ✅ Full CRUD operations for Todo items
 - ✅ RESTful API design
 - ✅ Request logging
@@ -15,6 +16,7 @@ A complete CRUD (Create, Read, Update, Delete) application demonstrating the cap
 - ✅ Bulk delete completed items
 
 ### Frontend (React)
+
 - ✅ Create new todos
 - ✅ View all todos
 - ✅ Update existing todos
@@ -48,6 +50,7 @@ crud-app/
 ## API Endpoints
 
 ### Todos
+
 - `GET /api/todos` - Get all todos (supports ?completed=true/false filter)
 - `GET /api/todos/:id` - Get todo by ID
 - `POST /api/todos` - Create new todo
@@ -57,9 +60,11 @@ crud-app/
 - `DELETE /api/todos` - Delete all completed todos
 
 ### Stats
+
 - `GET /api/todos/stats` - Get statistics (total, completed, incomplete, completion rate)
 
 ### Health
+
 - `GET /api/health` - Server health check
 
 ## Installation & Running
@@ -87,6 +92,7 @@ Client will run on http://localhost:3000
 ## Testing the Application
 
 ### Manual Testing
+
 1. Start the backend server
 2. Start the frontend client
 3. Open http://localhost:3000 in your browser
@@ -133,6 +139,7 @@ curl -X DELETE http://localhost:3001/api/todos
 ## Screenshots
 
 The application features:
+
 - Modern gradient design (purple to blue)
 - Clean, card-based layout
 - Real-time statistics dashboard
@@ -143,12 +150,14 @@ The application features:
 ## Technologies Used
 
 ### Backend
+
 - Express.js
 - TypeScript
 - CORS
 - dotenv
 
 ### Frontend
+
 - React 18
 - TypeScript
 - CSS3 (with gradients and animations)
@@ -181,6 +190,7 @@ interface Todo {
 ## Error Handling
 
 The application includes comprehensive error handling:
+
 - Input validation
 - 404 for not found resources
 - 500 for server errors
@@ -190,6 +200,7 @@ The application includes comprehensive error handling:
 ## Future Enhancements
 
 Potential improvements:
+
 - [ ] Add persistent storage (MongoDB/PostgreSQL)
 - [ ] User authentication
 - [ ] Todo categories/tags

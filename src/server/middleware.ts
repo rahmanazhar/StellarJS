@@ -7,12 +7,7 @@ const logger = createLogger('Middleware');
 /**
  * Error handling middleware
  */
-export const errorHandler = (
-  err: Error,
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction): void => {
   logger.error('Request error:', err);
 
   const statusCode = (err as any).statusCode || HTTP_STATUS.INTERNAL_SERVER_ERROR;
@@ -21,8 +16,8 @@ export const errorHandler = (
   res.status(statusCode).json({
     error: {
       message,
-      ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-    }
+      ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
+    },
   });
 };
 
@@ -34,9 +29,7 @@ export const requestLogger = (req: Request, res: Response, next: NextFunction): 
 
   res.on('finish', () => {
     const duration = Date.now() - start;
-    logger.info(
-      `${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`
-    );
+    logger.info(`${req.method} ${req.originalUrl} ${res.statusCode} - ${duration}ms`);
   });
 
   next();
@@ -49,8 +42,8 @@ export const notFound = (req: Request, res: Response, next: NextFunction): void 
   res.status(HTTP_STATUS.NOT_FOUND).json({
     error: {
       message: ERROR_MESSAGES.NOT_FOUND,
-      path: req.originalUrl
-    }
+      path: req.originalUrl,
+    },
   });
 };
 
@@ -59,14 +52,14 @@ export const notFound = (req: Request, res: Response, next: NextFunction): void 
  */
 export const validateBody = (requiredFields: string[]) => {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const missingFields = requiredFields.filter(field => !req.body[field]);
+    const missingFields = requiredFields.filter((field) => !req.body[field]);
 
     if (missingFields.length > 0) {
       res.status(HTTP_STATUS.BAD_REQUEST).json({
         error: {
           message: ERROR_MESSAGES.VALIDATION_ERROR,
-          missingFields
-        }
+          missingFields,
+        },
       });
       return;
     }
@@ -78,10 +71,7 @@ export const validateBody = (requiredFields: string[]) => {
 /**
  * Rate limiting middleware factory
  */
-export const rateLimit = (options: {
-  windowMs: number;
-  maxRequests: number;
-}) => {
+export const rateLimit = (options: { windowMs: number; maxRequests: number }) => {
   const requests = new Map<string, { count: number; resetTime: number }>();
 
   return (req: Request, res: Response, next: NextFunction): void => {
@@ -92,7 +82,7 @@ export const rateLimit = (options: {
     if (!record || now > record.resetTime) {
       requests.set(identifier, {
         count: 1,
-        resetTime: now + options.windowMs
+        resetTime: now + options.windowMs,
       });
       next();
       return;
@@ -101,8 +91,8 @@ export const rateLimit = (options: {
     if (record.count >= options.maxRequests) {
       res.status(429).json({
         error: {
-          message: 'Too many requests, please try again later'
-        }
+          message: 'Too many requests, please try again later',
+        },
       });
       return;
     }
@@ -138,14 +128,14 @@ export const configureCors = (allowedOrigins: string[] = ['*']) => {
 /**
  * Request timeout middleware
  */
-export const timeout = (ms: number = 30000) => {
+export const timeout = (ms = 30000) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     const timer = setTimeout(() => {
       if (!res.headersSent) {
         res.status(HTTP_STATUS.SERVICE_UNAVAILABLE).json({
           error: {
-            message: 'Request timeout'
-          }
+            message: 'Request timeout',
+          },
         });
       }
     }, ms);
@@ -170,8 +160,7 @@ export const apiVersion = (version: string) => {
  * Request ID middleware
  */
 export const requestId = (req: Request, res: Response, next: NextFunction): void => {
-  const id = req.headers['x-request-id'] as string || 
-    Math.random().toString(36).substring(2, 15);
+  const id = (req.headers['x-request-id'] as string) || Math.random().toString(36).substring(2, 15);
   (req as any).id = id;
   res.setHeader('X-Request-ID', id);
   next();
@@ -210,7 +199,7 @@ export const formatResponse = (req: Request, res: Response, next: NextFunction):
       return originalJson({
         success: true,
         data,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
     }
     return originalJson(data);

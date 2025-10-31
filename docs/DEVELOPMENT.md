@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-```
+````
 StellarJS/
 ├── cli/                    # CLI tools
 │   ├── commands/          # CLI command implementations
@@ -123,7 +123,7 @@ npm test
 
 # Lint code
 npm run lint
-```
+````
 
 ## Publishing
 
@@ -155,32 +155,38 @@ stellar create my-test-app
 ## Next Steps for Production
 
 1. **Add comprehensive tests**
+
    - Unit tests for all utilities
    - Integration tests for server components
    - E2E tests for CLI
 
 2. **Add more documentation**
+
    - API reference
    - Detailed guides
    - Migration guides
    - Best practices
 
 3. **Add more templates**
+
    - Advanced template with database
    - API-only template
    - Full-stack template with auth
 
 4. **Enhance CLI**
+
    - Interactive prompts
    - Better error messages
    - Progress indicators
 
 5. **Add plugins system**
+
    - Plugin architecture
    - Official plugins
    - Plugin documentation
 
 6. **Performance optimizations**
+
    - Bundle size optimization
    - Tree shaking
    - Code splitting

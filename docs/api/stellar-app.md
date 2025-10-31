@@ -50,11 +50,11 @@ const config = {
   apiUrl: process.env.API_URL || 'http://localhost:3000',
   auth: {
     jwtSecret: process.env.JWT_SECRET,
-    tokenExpiration: '24h'
+    tokenExpiration: '24h',
   },
   services: {
     // Your service configurations
-  }
+  },
 };
 
 function App() {
@@ -80,12 +80,12 @@ const config = {
   apiUrl: 'http://localhost:3000',
   auth: {
     jwtSecret: 'your-secret-key',
-    tokenExpiration: '24h'
+    tokenExpiration: '24h',
   },
   services: {
     user: new UserService(),
-    product: new ProductService()
-  }
+    product: new ProductService(),
+  },
 };
 
 function App() {
@@ -110,19 +110,17 @@ const config = {
   apiUrl: process.env.REACT_APP_API_URL,
   auth: {
     jwtSecret: process.env.REACT_APP_JWT_SECRET,
-    tokenExpiration: process.env.REACT_APP_TOKEN_EXPIRATION || '24h'
+    tokenExpiration: process.env.REACT_APP_TOKEN_EXPIRATION || '24h',
   },
   services: {
     // Service configurations
-  }
+  },
 };
 
 function App() {
   return (
     <StellarApp config={config}>
-      <div>
-        {/* Your app components */}
-      </div>
+      <div>{/* Your app components */}</div>
     </StellarApp>
   );
 }
@@ -137,7 +135,7 @@ import { useStellar } from 'stellar-js';
 
 function MyComponent() {
   const { config } = useStellar();
-  
+
   return (
     <div>
       <p>API URL: {config.apiUrl}</p>
@@ -155,7 +153,7 @@ import { StellarApp } from 'stellar-js';
 
 function App() {
   return (
-    <StellarApp 
+    <StellarApp
       config={config}
       onError={(error) => {
         // Handle error
@@ -171,16 +169,19 @@ function App() {
 ## Best Practices
 
 1. **Configuration Management**
+
    - Keep sensitive information in environment variables
    - Use different configurations for development and production
    - Validate configuration at startup
 
 2. **Service Organization**
+
    - Group related services together
    - Use meaningful service names
    - Initialize services with proper configuration
 
 3. **Error Handling**
+
    - Implement proper error boundaries
    - Log errors appropriately
    - Provide user-friendly error messages

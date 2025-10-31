@@ -21,10 +21,12 @@ export interface StoreConfig<S> {
   devTools?: boolean;
 }
 
+export type ThunkAction<S> = (dispatch: Dispatch, getState: () => S) => any;
+
 export type Middleware<S> = (store: {
   getState: () => S;
   dispatch: Dispatch;
-}) => (next: Dispatch) => (action: Action) => void;
+}) => (next: Dispatch) => (action: Action | ThunkAction<S>) => void;
 
 export interface Store<S> {
   getState: () => S;
@@ -153,6 +155,10 @@ export const loggerMiddleware: Middleware<any> =
   ({ getState }) =>
   (next) =>
   (action) => {
+    if (typeof action === 'function') {
+      // Pass thunks through to the next middleware
+      return (next as any)(action);
+    }
     console.group(action.type);
     console.log('Previous State:', getState());
     console.log('Action:', action);
@@ -174,6 +180,10 @@ export const thunkMiddleware: Middleware<any> =
 
 // Performance monitoring middleware
 export const perfMiddleware: Middleware<any> = () => (next) => (action) => {
+  if (typeof action === 'function') {
+    // Pass thunks through to the next middleware
+    return (next as any)(action);
+  }
   const start = performance.now();
   next(action);
   const end = performance.now();
@@ -235,6 +245,11 @@ export function createPersistMiddleware<S>(key: string, whitelist?: (keyof S)[])
   return ({ getState }) =>
     (next) =>
     (action) => {
+      if (typeof action === 'function') {
+        // Pass thunks through to the next middleware
+        return (next as any)(action);
+      }
+
       next(action);
 
       const state = getState();

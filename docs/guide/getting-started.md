@@ -49,20 +49,20 @@ module.exports = {
   server: {
     port: 3000,
     cors: {
-      origin: '*'
-    }
+      origin: '*',
+    },
   },
-  
+
   // Authentication configuration
   auth: {
     jwtSecret: process.env.JWT_SECRET,
-    tokenExpiration: '24h'
+    tokenExpiration: '24h',
   },
-  
+
   // Service configuration
   services: {
     // Add your service configurations
-  }
+  },
 };
 ```
 
@@ -75,6 +75,7 @@ npm run dev
 ```
 
 This command starts both the frontend and backend servers:
+
 - Frontend: [http://localhost:3001](http://localhost:3001)
 - Backend: [http://localhost:3000](http://localhost:3000)
 
@@ -95,7 +96,7 @@ export class UserService {
     // Implementation
     return [
       { id: 1, name: 'John Doe' },
-      { id: 2, name: 'Jane Smith' }
+      { id: 2, name: 'Jane Smith' },
     ];
   }
 
@@ -129,7 +130,7 @@ export const UserList: React.FC = () => {
 
   return (
     <ul>
-      {data.map(user => (
+      {data.map((user) => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
@@ -147,8 +148,8 @@ StellarJS comes with built-in authentication. Here's how to use it:
 module.exports = {
   auth: {
     jwtSecret: process.env.JWT_SECRET,
-    tokenExpiration: '24h'
-  }
+    tokenExpiration: '24h',
+  },
 };
 ```
 
@@ -163,7 +164,7 @@ function LoginComponent() {
   const handleLogin = async () => {
     const result = await login({
       email: 'user@example.com',
-      password: 'password'
+      password: 'password',
     });
 
     if (result.success) {

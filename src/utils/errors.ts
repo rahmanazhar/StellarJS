@@ -6,7 +6,7 @@ export class StellarError extends Error {
   public statusCode: number;
   public isOperational: boolean;
 
-  constructor(message: string, statusCode: number = 500, isOperational: boolean = true) {
+  constructor(message: string, statusCode = 500, isOperational = true) {
     super(message);
     this.name = this.constructor.name;
     this.statusCode = statusCode;
@@ -19,44 +19,44 @@ export class StellarError extends Error {
 export class ValidationError extends StellarError {
   public errors: any[];
 
-  constructor(message: string = 'Validation failed', errors: any[] = []) {
+  constructor(message = 'Validation failed', errors: any[] = []) {
     super(message, 400);
     this.errors = errors;
   }
 }
 
 export class AuthenticationError extends StellarError {
-  constructor(message: string = 'Authentication required') {
+  constructor(message = 'Authentication required') {
     super(message, 401);
   }
 }
 
 export class AuthorizationError extends StellarError {
-  constructor(message: string = 'Insufficient permissions') {
+  constructor(message = 'Insufficient permissions') {
     super(message, 403);
   }
 }
 
 export class NotFoundError extends StellarError {
-  constructor(message: string = 'Resource not found') {
+  constructor(message = 'Resource not found') {
     super(message, 404);
   }
 }
 
 export class ConflictError extends StellarError {
-  constructor(message: string = 'Resource conflict') {
+  constructor(message = 'Resource conflict') {
     super(message, 409);
   }
 }
 
 export class RateLimitError extends StellarError {
-  constructor(message: string = 'Too many requests') {
+  constructor(message = 'Too many requests') {
     super(message, 429);
   }
 }
 
 export class ServiceUnavailableError extends StellarError {
-  constructor(message: string = 'Service temporarily unavailable') {
+  constructor(message = 'Service temporarily unavailable') {
     super(message, 503);
   }
 }
@@ -80,8 +80,8 @@ export function formatErrorResponse(error: Error) {
       error: {
         message: error.message,
         details: error.errors,
-        statusCode: error.statusCode
-      }
+        statusCode: error.statusCode,
+      },
     };
   }
 
@@ -89,8 +89,8 @@ export function formatErrorResponse(error: Error) {
     return {
       error: {
         message: error.message,
-        statusCode: error.statusCode
-      }
+        statusCode: error.statusCode,
+      },
     };
   }
 
@@ -99,8 +99,8 @@ export function formatErrorResponse(error: Error) {
     return {
       error: {
         message: 'Internal server error',
-        statusCode: 500
-      }
+        statusCode: 500,
+      },
     };
   }
 
@@ -108,7 +108,7 @@ export function formatErrorResponse(error: Error) {
     error: {
       message: error.message,
       statusCode: 500,
-      stack: error.stack
-    }
+      stack: error.stack,
+    },
   };
 }

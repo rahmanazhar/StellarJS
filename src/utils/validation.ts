@@ -40,7 +40,7 @@ export function validate(data: any, schema: ValidationSchema): ValidationResult 
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
@@ -54,7 +54,7 @@ function validateField(field: string, value: any, rule: ValidationRule): Validat
   if (rule.required && (value === undefined || value === null || value === '')) {
     errors.push({
       field,
-      message: rule.message || `${field} is required`
+      message: rule.message || `${field} is required`,
     });
     return errors;
   }
@@ -78,12 +78,12 @@ function validateField(field: string, value: any, rule: ValidationRule): Validat
     if (typeof value === 'string' && value.length < rule.min) {
       errors.push({
         field,
-        message: rule.message || `${field} must be at least ${rule.min} characters`
+        message: rule.message || `${field} must be at least ${rule.min} characters`,
       });
     } else if (typeof value === 'number' && value < rule.min) {
       errors.push({
         field,
-        message: rule.message || `${field} must be at least ${rule.min}`
+        message: rule.message || `${field} must be at least ${rule.min}`,
       });
     }
   }
@@ -92,12 +92,12 @@ function validateField(field: string, value: any, rule: ValidationRule): Validat
     if (typeof value === 'string' && value.length > rule.max) {
       errors.push({
         field,
-        message: rule.message || `${field} must be at most ${rule.max} characters`
+        message: rule.message || `${field} must be at most ${rule.max} characters`,
       });
     } else if (typeof value === 'number' && value > rule.max) {
       errors.push({
         field,
-        message: rule.message || `${field} must be at most ${rule.max}`
+        message: rule.message || `${field} must be at most ${rule.max}`,
       });
     }
   }
@@ -106,7 +106,7 @@ function validateField(field: string, value: any, rule: ValidationRule): Validat
   if (rule.pattern && typeof value === 'string' && !rule.pattern.test(value)) {
     errors.push({
       field,
-      message: rule.message || `${field} has invalid format`
+      message: rule.message || `${field} has invalid format`,
     });
   }
 
@@ -114,7 +114,7 @@ function validateField(field: string, value: any, rule: ValidationRule): Validat
   if (rule.custom && !rule.custom(value)) {
     errors.push({
       field,
-      message: rule.message || `${field} failed custom validation`
+      message: rule.message || `${field} failed custom validation`,
     });
   }
 
@@ -212,45 +212,45 @@ export const commonSchemas = {
     email: {
       type: 'email' as const,
       required: true,
-      message: 'Valid email is required'
-    }
+      message: 'Valid email is required',
+    },
   },
   password: {
     password: {
       type: 'string' as const,
       required: true,
       min: 8,
-      message: 'Password must be at least 8 characters'
-    }
+      message: 'Password must be at least 8 characters',
+    },
   },
   login: {
     email: {
       type: 'email' as const,
-      required: true
+      required: true,
     },
     password: {
       type: 'string' as const,
       required: true,
-      min: 8
-    }
+      min: 8,
+    },
   },
   register: {
     email: {
       type: 'email' as const,
-      required: true
+      required: true,
     },
     password: {
       type: 'string' as const,
       required: true,
-      min: 8
+      min: 8,
     },
     name: {
       type: 'string' as const,
       required: true,
       min: 2,
-      max: 100
-    }
-  }
+      max: 100,
+    },
+  },
 };
 
 /**
@@ -264,8 +264,8 @@ export function validateRequest(schema: ValidationSchema) {
       return res.status(400).json({
         error: {
           message: 'Validation failed',
-          details: result.errors
-        }
+          details: result.errors,
+        },
       });
     }
 
@@ -276,11 +276,7 @@ export function validateRequest(schema: ValidationSchema) {
 /**
  * Validate nested objects
  */
-export function validateNested(
-  data: any,
-  schema: ValidationSchema,
-  prefix: string = ''
-): ValidationResult {
+export function validateNested(data: any, schema: ValidationSchema, prefix = ''): ValidationResult {
   const errors: ValidationError[] = [];
 
   for (const [field, rule] of Object.entries(schema)) {
@@ -299,39 +295,36 @@ export function validateNested(
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
 
 /**
  * Validate array of objects
  */
-export function validateArray(
-  data: any[],
-  schema: ValidationSchema
-): ValidationResult {
+export function validateArray(data: any[], schema: ValidationSchema): ValidationResult {
   const errors: ValidationError[] = [];
 
   if (!Array.isArray(data)) {
     errors.push({
       field: 'data',
-      message: 'Expected an array'
+      message: 'Expected an array',
     });
     return { valid: false, errors };
   }
 
   data.forEach((item, index) => {
     const result = validate(item, schema);
-    result.errors.forEach(error => {
+    result.errors.forEach((error) => {
       errors.push({
         field: `[${index}].${error.field}`,
-        message: error.message
+        message: error.message,
       });
     });
   });
 
   return {
     valid: errors.length === 0,
-    errors
+    errors,
   };
 }
