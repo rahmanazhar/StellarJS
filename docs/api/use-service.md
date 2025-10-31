@@ -41,39 +41,42 @@ interface ServiceResponse<T> {
 ## Parameters
 
 ### `serviceName`
+
 - Type: `string`
 - Required: `true`
 - Description: The name of the service to use
 
 ### `method`
+
 - Type: `string`
 - Required: `true`
 - Description: The name of the method to call on the service
 
 ### `options`
+
 - Type: `UseServiceOptions`
 - Required: `false`
 - Description: Configuration options for the hook
 
 #### Options Object
 
-| Option | Type | Description |
-|--------|------|-------------|
-| `immediate` | `boolean` | Whether to execute the service call immediately when the component mounts |
-| `onSuccess` | `(data: any) => void` | Callback function called when the service call succeeds |
-| `onError` | `(error: Error) => void` | Callback function called when the service call fails |
+| Option      | Type                     | Description                                                               |
+| ----------- | ------------------------ | ------------------------------------------------------------------------- |
+| `immediate` | `boolean`                | Whether to execute the service call immediately when the component mounts |
+| `onSuccess` | `(data: any) => void`    | Callback function called when the service call succeeds                   |
+| `onError`   | `(error: Error) => void` | Callback function called when the service call fails                      |
 
 ## Return Value
 
 The hook returns an object with the following properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `data` | `T \| null` | The data returned from the service call |
-| `error` | `Error \| null` | Any error that occurred during the service call |
-| `loading` | `boolean` | Whether the service call is in progress |
-| `execute` | `(...args: any[]) => Promise<ServiceResponse<T>>` | Function to manually execute the service call |
-| `reset` | `() => void` | Function to reset the hook's state |
+| Property  | Type                                              | Description                                     |
+| --------- | ------------------------------------------------- | ----------------------------------------------- |
+| `data`    | `T \| null`                                       | The data returned from the service call         |
+| `error`   | `Error \| null`                                   | Any error that occurred during the service call |
+| `loading` | `boolean`                                         | Whether the service call is in progress         |
+| `execute` | `(...args: any[]) => Promise<ServiceResponse<T>>` | Function to manually execute the service call   |
+| `reset`   | `() => void`                                      | Function to reset the hook's state              |
 
 ## Examples
 
@@ -88,7 +91,7 @@ function UserList() {
 
   return (
     <ul>
-      {data?.map(user => (
+      {data?.map((user) => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
@@ -130,7 +133,7 @@ function UserDashboard() {
     },
     onError: (error) => {
       console.error('Failed to load profile:', error);
-    }
+    },
   });
 
   return (
@@ -159,7 +162,7 @@ interface User {
 
 function UserProfile() {
   const { data, loading } = useService<User>('user', 'getProfile', {
-    immediate: true
+    immediate: true,
   });
 
   if (loading) return <div>Loading...</div>;
@@ -198,7 +201,7 @@ function UserSearch() {
         <div>Searching...</div>
       ) : (
         <ul>
-          {data?.map(user => (
+          {data?.map((user) => (
             <li key={user.id}>{user.name}</li>
           ))}
         </ul>
@@ -211,15 +214,18 @@ function UserSearch() {
 ## Best Practices
 
 1. **Type Safety**
+
    - Always use TypeScript generics to specify the expected data type
    - Define interfaces for your service responses
 
 2. **Error Handling**
+
    - Always handle potential errors in your components
    - Provide user-friendly error messages
    - Use the onError callback for global error handling
 
 3. **Loading States**
+
    - Show loading indicators during service calls
    - Disable form submissions while loading
    - Consider using skeleton loaders for better UX

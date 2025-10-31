@@ -19,7 +19,7 @@ export class TodoService {
   constructor() {
     this.todos = new Map();
     this.nextId = 1;
-    
+
     // Add some sample todos
     this.seedData();
   }
@@ -32,27 +32,27 @@ export class TodoService {
       {
         title: 'Learn StellarJS',
         description: 'Complete the StellarJS tutorial and examples',
-        completed: false
+        completed: false,
       },
       {
         title: 'Build a fullstack app',
         description: 'Create a complete application using StellarJS framework',
-        completed: false
+        completed: false,
       },
       {
         title: 'Deploy to production',
         description: 'Deploy the application to a production server',
-        completed: false
-      }
+        completed: false,
+      },
     ];
 
-    sampleTodos.forEach(todo => {
+    sampleTodos.forEach((todo) => {
       const id = String(this.nextId++);
       this.todos.set(id, {
         ...todo,
         id,
         createdAt: new Date(),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       });
     });
   }
@@ -68,7 +68,7 @@ export class TodoService {
       // Filter by completed status if provided
       if (completed !== undefined) {
         const isCompleted = completed === 'true';
-        todos = todos.filter(todo => todo.completed === isCompleted);
+        todos = todos.filter((todo) => todo.completed === isCompleted);
       }
 
       // Sort by creation date (newest first)
@@ -77,12 +77,12 @@ export class TodoService {
       res.json({
         success: true,
         data: todos,
-        count: todos.length
+        count: todos.length,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch todos'
+        error: 'Failed to fetch todos',
       });
     }
   }
@@ -98,19 +98,19 @@ export class TodoService {
       if (!todo) {
         res.status(404).json({
           success: false,
-          error: 'Todo not found'
+          error: 'Todo not found',
         });
         return;
       }
 
       res.json({
         success: true,
-        data: todo
+        data: todo,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch todo'
+        error: 'Failed to fetch todo',
       });
     }
   }
@@ -126,21 +126,21 @@ export class TodoService {
       if (!title || title.trim().length === 0) {
         res.status(400).json({
           success: false,
-          error: 'Title is required'
+          error: 'Title is required',
         });
         return;
       }
 
       const id = String(this.nextId++);
       const now = new Date();
-      
+
       const newTodo: Todo = {
         id,
         title: title.trim(),
         description: description?.trim() || '',
         completed: false,
         createdAt: now,
-        updatedAt: now
+        updatedAt: now,
       };
 
       this.todos.set(id, newTodo);
@@ -148,12 +148,12 @@ export class TodoService {
       res.status(201).json({
         success: true,
         data: newTodo,
-        message: 'Todo created successfully'
+        message: 'Todo created successfully',
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to create todo'
+        error: 'Failed to create todo',
       });
     }
   }
@@ -170,7 +170,7 @@ export class TodoService {
       if (!todo) {
         res.status(404).json({
           success: false,
-          error: 'Todo not found'
+          error: 'Todo not found',
         });
         return;
       }
@@ -181,7 +181,7 @@ export class TodoService {
         ...(title !== undefined && { title: title.trim() }),
         ...(description !== undefined && { description: description.trim() }),
         ...(completed !== undefined && { completed: Boolean(completed) }),
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       this.todos.set(id, updatedTodo);
@@ -189,12 +189,12 @@ export class TodoService {
       res.json({
         success: true,
         data: updatedTodo,
-        message: 'Todo updated successfully'
+        message: 'Todo updated successfully',
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to update todo'
+        error: 'Failed to update todo',
       });
     }
   }
@@ -210,7 +210,7 @@ export class TodoService {
       if (!todo) {
         res.status(404).json({
           success: false,
-          error: 'Todo not found'
+          error: 'Todo not found',
         });
         return;
       }
@@ -218,7 +218,7 @@ export class TodoService {
       const updatedTodo: Todo = {
         ...todo,
         completed: !todo.completed,
-        updatedAt: new Date()
+        updatedAt: new Date(),
       };
 
       this.todos.set(id, updatedTodo);
@@ -226,12 +226,12 @@ export class TodoService {
       res.json({
         success: true,
         data: updatedTodo,
-        message: `Todo marked as ${updatedTodo.completed ? 'completed' : 'incomplete'}`
+        message: `Todo marked as ${updatedTodo.completed ? 'completed' : 'incomplete'}`,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to toggle todo'
+        error: 'Failed to toggle todo',
       });
     }
   }
@@ -246,7 +246,7 @@ export class TodoService {
       if (!this.todos.has(id)) {
         res.status(404).json({
           success: false,
-          error: 'Todo not found'
+          error: 'Todo not found',
         });
         return;
       }
@@ -255,12 +255,12 @@ export class TodoService {
 
       res.json({
         success: true,
-        message: 'Todo deleted successfully'
+        message: 'Todo deleted successfully',
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to delete todo'
+        error: 'Failed to delete todo',
       });
     }
   }
@@ -271,24 +271,24 @@ export class TodoService {
   async deleteCompleted(req: Request, res: Response): Promise<void> {
     try {
       const completedIds: string[] = [];
-      
+
       this.todos.forEach((todo, id) => {
         if (todo.completed) {
           completedIds.push(id);
         }
       });
 
-      completedIds.forEach(id => this.todos.delete(id));
+      completedIds.forEach((id) => this.todos.delete(id));
 
       res.json({
         success: true,
         message: `Deleted ${completedIds.length} completed todo(s)`,
-        count: completedIds.length
+        count: completedIds.length,
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to delete completed todos'
+        error: 'Failed to delete completed todos',
       });
     }
   }
@@ -299,7 +299,7 @@ export class TodoService {
   async getStats(req: Request, res: Response): Promise<void> {
     try {
       const allTodos = Array.from(this.todos.values());
-      const completed = allTodos.filter(t => t.completed).length;
+      const completed = allTodos.filter((t) => t.completed).length;
       const incomplete = allTodos.length - completed;
 
       res.json({
@@ -308,15 +308,13 @@ export class TodoService {
           total: allTodos.length,
           completed,
           incomplete,
-          completionRate: allTodos.length > 0 
-            ? Math.round((completed / allTodos.length) * 100) 
-            : 0
-        }
+          completionRate: allTodos.length > 0 ? Math.round((completed / allTodos.length) * 100) : 0,
+        },
       });
     } catch (error) {
       res.status(500).json({
         success: false,
-        error: 'Failed to fetch stats'
+        error: 'Failed to fetch stats',
       });
     }
   }

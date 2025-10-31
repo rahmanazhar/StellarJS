@@ -32,26 +32,28 @@ app.get('/api/todos/stats', (req: Request, res: Response) => todoService.getStat
 app.get('/api/todos/:id', (req: Request, res: Response) => todoService.getTodoById(req, res));
 app.post('/api/todos', (req: Request, res: Response) => todoService.createTodo(req, res));
 app.put('/api/todos/:id', (req: Request, res: Response) => todoService.updateTodo(req, res));
-app.patch('/api/todos/:id/toggle', (req: Request, res: Response) => todoService.toggleTodo(req, res));
+app.patch('/api/todos/:id/toggle', (req: Request, res: Response) =>
+  todoService.toggleTodo(req, res)
+);
 app.delete('/api/todos/:id', (req: Request, res: Response) => todoService.deleteTodo(req, res));
 app.delete('/api/todos', (req: Request, res: Response) => todoService.deleteCompleted(req, res));
 
 // 404 handler
 app.use((req: Request, res: Response) => {
-  res.status(404).json({ 
-    success: false, 
+  res.status(404).json({
+    success: false,
     error: 'Not Found',
-    message: `Route ${req.method} ${req.url} not found`
+    message: `Route ${req.method} ${req.url} not found`,
   });
 });
 
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err);
-  res.status(500).json({ 
-    success: false, 
+  res.status(500).json({
+    success: false,
     error: 'Internal server error',
-    message: err.message 
+    message: err.message,
   });
 });
 

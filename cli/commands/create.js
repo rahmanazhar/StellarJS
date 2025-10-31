@@ -14,10 +14,10 @@ async function createProject(projectName, options) {
 
     // Create project structure
     await createProjectStructure(projectPath);
-    
+
     // Create package.json
     await createPackageJson(projectPath, projectName);
-    
+
     // Create tsconfig if using TypeScript
     if (options.typescript) {
       await createTsConfig(projectPath);
@@ -48,7 +48,7 @@ async function createProjectStructure(projectPath) {
     'src/pages',
     'src/styles',
     'public',
-    'tests'
+    'tests',
   ];
 
   for (const dir of dirs) {
@@ -65,41 +65,38 @@ async function createPackageJson(projectPath, projectName) {
       dev: 'stellar dev',
       build: 'stellar build',
       start: 'stellar start',
-      test: 'jest'
+      test: 'jest',
     },
     dependencies: {
-      'react': '^18.2.0',
+      react: '^18.2.0',
       'react-dom': '^18.2.0',
       'react-router-dom': '^6.14.0',
-      'express': '^4.18.2',
-      'cors': '^2.8.5',
-      'stellar-js': 'latest'
+      express: '^4.18.2',
+      cors: '^2.8.5',
+      'stellar-js': 'latest',
     },
     devDependencies: {
       '@types/react': '^18.2.14',
       '@types/react-dom': '^18.2.6',
       '@types/express': '^4.17.17',
       '@types/node': '^20.3.2',
-      'typescript': '^5.1.5',
-      'jest': '^29.5.0',
+      typescript: '^5.1.5',
+      jest: '^29.5.0',
       '@types/jest': '^29.5.2',
-      'eslint': '^8.43.0',
+      eslint: '^8.43.0',
       '@typescript-eslint/parser': '^5.61.0',
-      '@typescript-eslint/eslint-plugin': '^5.61.0'
-    }
+      '@typescript-eslint/eslint-plugin': '^5.61.0',
+    },
   };
 
-  await fs.writeFile(
-    path.join(projectPath, 'package.json'),
-    JSON.stringify(packageJson, null, 2)
-  );
+  await fs.writeFile(path.join(projectPath, 'package.json'), JSON.stringify(packageJson, null, 2));
 }
 
 async function createTsConfig(projectPath) {
   const tsConfig = {
     compilerOptions: {
-      target: "es2020",
-      lib: ["dom", "dom.iterable", "esnext"],
+      target: 'es2020',
+      lib: ['dom', 'dom.iterable', 'esnext'],
       allowJs: true,
       skipLibCheck: true,
       esModuleInterop: true,
@@ -107,26 +104,23 @@ async function createTsConfig(projectPath) {
       strict: true,
       forceConsistentCasingInFileNames: true,
       noFallthroughCasesInSwitch: true,
-      module: "esnext",
-      moduleResolution: "node",
+      module: 'esnext',
+      moduleResolution: 'node',
       resolveJsonModule: true,
       isolatedModules: true,
       noEmit: true,
-      jsx: "react-jsx"
+      jsx: 'react-jsx',
     },
-    include: ["src"],
-    exclude: ["node_modules"]
+    include: ['src'],
+    exclude: ['node_modules'],
   };
 
-  await fs.writeFile(
-    path.join(projectPath, 'tsconfig.json'),
-    JSON.stringify(tsConfig, null, 2)
-  );
+  await fs.writeFile(path.join(projectPath, 'tsconfig.json'), JSON.stringify(tsConfig, null, 2));
 }
 
 async function createSourceFiles(projectPath, options) {
   const ext = options.typescript ? 'tsx' : 'jsx';
-  
+
   // Create App component
   const appContent = `
 import React from 'react';
@@ -187,7 +181,7 @@ export default Home;
   await Promise.all([
     fs.writeFile(path.join(projectPath, 'src', `App.${ext}`), appContent.trim()),
     fs.writeFile(path.join(projectPath, 'src', `Router.${ext}`), routerContent.trim()),
-    fs.writeFile(path.join(projectPath, 'src/pages', `Home.${ext}`), homeContent.trim())
+    fs.writeFile(path.join(projectPath, 'src/pages', `Home.${ext}`), homeContent.trim()),
   ]);
 }
 
@@ -200,5 +194,5 @@ function installDependencies(projectPath) {
 }
 
 module.exports = {
-  createProject
+  createProject,
 };

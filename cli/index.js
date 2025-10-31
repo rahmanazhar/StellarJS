@@ -7,10 +7,7 @@ const { generateComponent, generateService } = require('./commands/generate');
 const { version } = require('../package.json');
 
 // Configure CLI
-program
-  .name('stellar')
-  .description('StellarJS CLI - Modern Fullstack Framework')
-  .version(version);
+program.name('stellar').description('StellarJS CLI - Modern Fullstack Framework').version(version);
 
 // Create new project
 program

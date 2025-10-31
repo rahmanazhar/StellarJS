@@ -1,6 +1,6 @@
 /**
  * StellarJS Usage Examples
- * 
+ *
  * This file demonstrates how to use various features of the StellarJS framework
  */
 
@@ -8,13 +8,13 @@
 // 1. BASIC SERVER SETUP
 // ============================================================================
 
-import { 
-  createServer, 
+import {
+  createServer,
   createAuthService,
   createUserService,
   requestLogger,
   errorHandler,
-  securityHeaders
+  securityHeaders,
 } from 'stellar-js';
 
 // Create a basic server
@@ -22,8 +22,8 @@ const server = createServer({
   port: 3000,
   auth: {
     jwtSecret: 'your-secret-key',
-    tokenExpiration: '24h'
-  }
+    tokenExpiration: '24h',
+  },
 });
 
 // Add middleware
@@ -33,7 +33,7 @@ server.use(securityHeaders);
 // Register services
 const authService = createAuthService({
   jwtSecret: 'your-secret-key',
-  tokenExpiration: '24h'
+  tokenExpiration: '24h',
 });
 
 const userService = createUserService();
@@ -42,8 +42,8 @@ server.registerService({
   name: 'auth',
   routes: [
     { path: '/login', method: 'POST', handler: authService.login.bind(authService) },
-    { path: '/register', method: 'POST', handler: authService.register.bind(authService) }
-  ]
+    { path: '/register', method: 'POST', handler: authService.register.bind(authService) },
+  ],
 });
 
 server.registerService({
@@ -53,8 +53,8 @@ server.registerService({
     { path: '/:id', method: 'GET', handler: userService.getUserById.bind(userService) },
     { path: '/', method: 'POST', handler: userService.createUser.bind(userService) },
     { path: '/:id', method: 'PUT', handler: userService.updateUser.bind(userService) },
-    { path: '/:id', method: 'DELETE', handler: userService.deleteUser.bind(userService) }
-  ]
+    { path: '/:id', method: 'DELETE', handler: userService.deleteUser.bind(userService) },
+  ],
 });
 
 // ============================================================================
@@ -66,7 +66,7 @@ import { initDatabase } from 'stellar-js';
 async function setupDatabase() {
   await initDatabase({
     uri: 'mongodb://localhost:27017/myapp',
-    autoConnect: true
+    autoConnect: true,
   });
 }
 
@@ -79,7 +79,7 @@ import { createApiDocGenerator } from 'stellar-js';
 const docGenerator = createApiDocGenerator({
   title: 'My API Documentation',
   version: '1.0.0',
-  baseUrl: 'http://localhost:3000'
+  baseUrl: 'http://localhost:3000',
 });
 
 // Register services with doc generator
@@ -87,8 +87,8 @@ docGenerator.registerService({
   name: 'auth',
   routes: [
     { path: '/login', method: 'POST', handler: () => {} },
-    { path: '/register', method: 'POST', handler: () => {} }
-  ]
+    { path: '/register', method: 'POST', handler: () => {} },
+  ],
 });
 
 // Setup documentation endpoints
@@ -121,19 +121,15 @@ app.post('/api/register', validateRequest(commonSchemas.register), (req, res) =>
 // 5. CUSTOM ERROR HANDLING
 // ============================================================================
 
-import { 
-  NotFoundError, 
-  ValidationError, 
-  AuthenticationError 
-} from 'stellar-js';
+import { NotFoundError, ValidationError, AuthenticationError } from 'stellar-js';
 
 app.get('/api/resource/:id', (req, res, next) => {
   const resource = null; // fetch from database
-  
+
   if (!resource) {
     throw new NotFoundError('Resource not found');
   }
-  
+
   res.json({ data: resource });
 });
 
@@ -145,21 +141,15 @@ server.use(errorHandler);
 // ============================================================================
 
 import React from 'react';
-import { 
-  StellarApp, 
-  useService, 
-  useAuth,
-  useAsync,
-  useLocalStorage 
-} from 'stellar-js';
+import { StellarApp, useService, useAuth, useAsync, useLocalStorage } from 'stellar-js';
 
 // App configuration
 const config = {
   apiUrl: 'http://localhost:3000',
   auth: {
-    jwtSecret: 'your-secret-key'
+    jwtSecret: 'your-secret-key',
   },
-  services: {}
+  services: {},
 };
 
 // Main App component
@@ -174,7 +164,7 @@ function App() {
 // Using service hook
 function UserListComponent() {
   const { data, loading, error, execute } = useService('users', 'getUsers', {
-    immediate: true
+    immediate: true,
   });
 
   if (loading) return <div>Loading...</div>;
@@ -182,7 +172,7 @@ function UserListComponent() {
 
   return (
     <ul>
-      {data?.map(user => (
+      {data?.map((user) => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
@@ -246,13 +236,7 @@ function PreferencesComponent() {
 // 7. UTILITY FUNCTIONS
 // ============================================================================
 
-import { 
-  createLogger,
-  retry,
-  debounce,
-  deepClone,
-  randomString 
-} from 'stellar-js';
+import { createLogger, retry, debounce, deepClone, randomString } from 'stellar-js';
 
 // Logger
 const logger = createLogger('MyApp');
@@ -270,7 +254,7 @@ const fetchWithRetry = async () => {
     {
       maxRetries: 3,
       initialDelay: 1000,
-      maxDelay: 10000
+      maxDelay: 10000,
     }
   );
 };
@@ -291,27 +275,22 @@ const token = randomString(32);
 // 8. CONFIGURATION MANAGEMENT
 // ============================================================================
 
-import { 
-  loadConfig,
-  validateServerConfig,
-  isDevelopment,
-  isProduction 
-} from 'stellar-js';
+import { loadConfig, validateServerConfig, isDevelopment, isProduction } from 'stellar-js';
 
 const baseConfig = {
   port: 3000,
   auth: {
-    jwtSecret: 'dev-secret'
-  }
+    jwtSecret: 'dev-secret',
+  },
 };
 
 const envConfigs = {
   production: {
     port: 8080,
     auth: {
-      jwtSecret: process.env.JWT_SECRET || ''
-    }
-  }
+      jwtSecret: process.env.JWT_SECRET || '',
+    },
+  },
 };
 
 const finalConfig = loadConfig(baseConfig, envConfigs);
@@ -332,10 +311,10 @@ async function startApp() {
   try {
     // Setup database
     await setupDatabase();
-    
+
     // Start server
     await server.start();
-    
+
     console.log('Application is running!');
   } catch (error) {
     console.error('Failed to start application:', error);

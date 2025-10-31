@@ -9,7 +9,11 @@
     "build": "tsc",
     "test": "node ../test-crud.js"
   },
-  "keywords": ["stellarjs", "crud", "example"],
+  "keywords": [
+    "stellarjs",
+    "crud",
+    "example"
+  ],
   "author": "StellarJS",
   "license": "MIT",
   "dependencies": {

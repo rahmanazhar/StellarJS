@@ -25,7 +25,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'active' | 'completed'>('all');
-  
+
   // Form state
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
@@ -38,13 +38,14 @@ function App() {
     setLoading(true);
     setError(null);
     try {
-      const url = filter === 'all' 
-        ? `${API_URL}/todos`
-        : `${API_URL}/todos?completed=${filter === 'completed'}`;
-      
+      const url =
+        filter === 'all'
+          ? `${API_URL}/todos`
+          : `${API_URL}/todos?completed=${filter === 'completed'}`;
+
       const response = await fetch(url);
       const data = await response.json();
-      
+
       if (data.success) {
         setTodos(data.data);
       } else {
@@ -82,8 +83,8 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: newTitle,
-          description: newDescription
-        })
+          description: newDescription,
+        }),
       });
 
       const data = await response.json();
@@ -111,8 +112,8 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: editTitle,
-          description: editDescription
-        })
+          description: editDescription,
+        }),
       });
 
       const data = await response.json();
@@ -134,7 +135,7 @@ function App() {
   const handleToggle = async (id: string) => {
     try {
       const response = await fetch(`${API_URL}/todos/${id}/toggle`, {
-        method: 'PATCH'
+        method: 'PATCH',
       });
 
       const data = await response.json();
@@ -156,7 +157,7 @@ function App() {
 
     try {
       const response = await fetch(`${API_URL}/todos/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const data = await response.json();
@@ -178,7 +179,7 @@ function App() {
 
     try {
       const response = await fetch(`${API_URL}/todos`, {
-        method: 'DELETE'
+        method: 'DELETE',
       });
 
       const data = await response.json();
@@ -275,16 +276,10 @@ function App() {
 
       {/* Filter Tabs */}
       <div className="filters">
-        <button
-          className={filter === 'all' ? 'active' : ''}
-          onClick={() => setFilter('all')}
-        >
+        <button className={filter === 'all' ? 'active' : ''} onClick={() => setFilter('all')}>
           All
         </button>
-        <button
-          className={filter === 'active' ? 'active' : ''}
-          onClick={() => setFilter('active')}
-        >
+        <button className={filter === 'active' ? 'active' : ''} onClick={() => setFilter('active')}>
           Active
         </button>
         <button
@@ -294,10 +289,7 @@ function App() {
           Completed
         </button>
         {stats && stats.completed > 0 && (
-          <button
-            className="btn-danger-outline"
-            onClick={handleDeleteCompleted}
-          >
+          <button className="btn-danger-outline" onClick={handleDeleteCompleted}>
             Clear Completed
           </button>
         )}
@@ -309,9 +301,7 @@ function App() {
           <div className="loading">Loading todos...</div>
         ) : todos.length === 0 ? (
           <div className="empty">
-            {filter === 'all' 
-              ? 'No todos yet. Create one above!' 
-              : `No ${filter} todos.`}
+            {filter === 'all' ? 'No todos yet. Create one above!' : `No ${filter} todos.`}
           </div>
         ) : (
           todos.map((todo) => (
@@ -329,16 +319,10 @@ function App() {
                     rows={2}
                   />
                   <div className="todo-actions">
-                    <button
-                      className="btn-success"
-                      onClick={() => handleUpdate(todo.id)}
-                    >
+                    <button className="btn-success" onClick={() => handleUpdate(todo.id)}>
                       Save
                     </button>
-                    <button
-                      className="btn-secondary"
-                      onClick={cancelEdit}
-                    >
+                    <button className="btn-secondary" onClick={cancelEdit}>
                       Cancel
                     </button>
                   </div>
@@ -354,22 +338,14 @@ function App() {
                     <div className="todo-text">
                       <h3>{todo.title}</h3>
                       {todo.description && <p>{todo.description}</p>}
-                      <small>
-                        Created: {new Date(todo.createdAt).toLocaleString()}
-                      </small>
+                      <small>Created: {new Date(todo.createdAt).toLocaleString()}</small>
                     </div>
                   </div>
                   <div className="todo-actions">
-                    <button
-                      className="btn-edit"
-                      onClick={() => startEdit(todo)}
-                    >
+                    <button className="btn-edit" onClick={() => startEdit(todo)}>
                       Edit
                     </button>
-                    <button
-                      className="btn-delete"
-                      onClick={() => handleDelete(todo.id)}
-                    >
+                    <button className="btn-delete" onClick={() => handleDelete(todo.id)}>
                       Delete
                     </button>
                   </div>

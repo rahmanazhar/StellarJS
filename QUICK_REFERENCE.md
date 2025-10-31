@@ -22,8 +22,8 @@ import { createServer } from 'stellar-js';
 const server = createServer({
   port: 3000,
   auth: {
-    jwtSecret: process.env.JWT_SECRET || 'your-secret'
-  }
+    jwtSecret: process.env.JWT_SECRET || 'your-secret',
+  },
 });
 
 await server.start();
@@ -35,15 +35,15 @@ await server.start();
 import { createAuthService } from 'stellar-js';
 
 const authService = createAuthService({
-  jwtSecret: 'your-secret'
+  jwtSecret: 'your-secret',
 });
 
 server.registerService({
   name: 'auth',
   routes: [
     { path: '/login', method: 'POST', handler: authService.login.bind(authService) },
-    { path: '/register', method: 'POST', handler: authService.register.bind(authService) }
-  ]
+    { path: '/register', method: 'POST', handler: authService.register.bind(authService) },
+  ],
 });
 ```
 
@@ -64,7 +64,7 @@ import { initDatabase } from 'stellar-js';
 
 await initDatabase({
   uri: 'mongodb://localhost:27017/myapp',
-  autoConnect: true
+  autoConnect: true,
 });
 ```
 
@@ -76,7 +76,7 @@ import { StellarApp } from 'stellar-js';
 const config = {
   apiUrl: 'http://localhost:3000',
   auth: { jwtSecret: 'your-secret' },
-  services: {}
+  services: {},
 };
 
 function App() {
@@ -95,13 +95,19 @@ import { useService } from 'stellar-js';
 
 function UserList() {
   const { data, loading, error } = useService('users', 'getUsers', {
-    immediate: true
+    immediate: true,
   });
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error!</div>;
-  
-  return <ul>{data.map(user => <li>{user.name}</li>)}</ul>;
+
+  return (
+    <ul>
+      {data.map((user) => (
+        <li>{user.name}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
@@ -129,7 +135,7 @@ import { validate, validateRequest, commonSchemas } from 'stellar-js';
 // Validate data
 const result = validate(data, {
   email: { type: 'email', required: true },
-  password: { type: 'string', required: true, min: 8 }
+  password: { type: 'string', required: true, min: 8 },
 });
 
 // Use as middleware
@@ -213,7 +219,7 @@ import { createApiDocGenerator } from 'stellar-js';
 const docGen = createApiDocGenerator({
   title: 'My API',
   version: '1.0.0',
-  baseUrl: 'http://localhost:3000'
+  baseUrl: 'http://localhost:3000',
 });
 
 docGen.setupDocEndpoint(app, '/api/docs');
@@ -231,7 +237,7 @@ stellar create my-app
 # Generate component
 stellar generate component UserCard
 
-# Generate service  
+# Generate service
 stellar generate service User
 
 # Start dev server
@@ -268,7 +274,7 @@ if (isDevelopment()) {
 import { renderWithProviders, createMockService } from 'stellar-js';
 
 const mockService = createMockService({
-  getUsers: jest.fn().mockResolvedValue([])
+  getUsers: jest.fn().mockResolvedValue([]),
 });
 
 renderWithProviders(<Component />, { services: { users: mockService } });

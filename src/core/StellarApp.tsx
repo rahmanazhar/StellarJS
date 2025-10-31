@@ -11,9 +11,7 @@ interface StellarAppProps {
 export const StellarApp: React.FC<StellarAppProps> = ({ config, children }) => {
   return (
     <StellarProvider config={config}>
-      <BrowserRouter>
-        {children}
-      </BrowserRouter>
+      <BrowserRouter>{children}</BrowserRouter>
     </StellarProvider>
   );
 };

@@ -3,10 +3,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 /**
  * useAsync hook for handling async operations
  */
-export function useAsync<T>(
-  asyncFunction: (...args: any[]) => Promise<T>,
-  immediate: boolean = false
-) {
+export function useAsync<T>(asyncFunction: (...args: any[]) => Promise<T>, immediate = false) {
   const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle');
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
@@ -46,7 +43,7 @@ export function useAsync<T>(
     isIdle: status === 'idle',
     isPending: status === 'pending',
     isSuccess: status === 'success',
-    isError: status === 'error'
+    isError: status === 'error',
   };
 }
 
@@ -184,7 +181,7 @@ export function useFetch<T>(url: string, options?: RequestInit) {
 /**
  * useDebounce hook for debouncing values
  */
-export function useDebounce<T>(value: T, delay: number = 500): T {
+export function useDebounce<T>(value: T, delay = 500): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
   useEffect(() => {
@@ -223,13 +220,11 @@ export function useInterval(callback: () => void, delay: number | null) {
 /**
  * useToggle hook for boolean states
  */
-export function useToggle(
-  initialValue: boolean = false
-): [boolean, () => void, (value: boolean) => void] {
+export function useToggle(initialValue = false): [boolean, () => void, (value: boolean) => void] {
   const [value, setValue] = useState(initialValue);
 
   const toggle = useCallback(() => {
-    setValue(v => !v);
+    setValue((v) => !v);
   }, []);
 
   return [value, toggle, setValue];

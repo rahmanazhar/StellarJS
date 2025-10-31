@@ -2,8 +2,8 @@
 layout: home
 
 hero:
-  name: "StellarJS"
-  text: "Modern Fullstack Framework"
+  name: 'StellarJS'
+  text: 'Modern Fullstack Framework'
   tagline: A powerful React framework with integrated microservices architecture
   actions:
     - theme: brand
@@ -17,23 +17,23 @@ features:
   - icon: ⚡️
     title: Integrated Frontend & Backend
     details: Seamlessly combine React frontend with Express-based microservices in a single project
-  
+
   - icon: 🔒
     title: Built-in Authentication
     details: Ready-to-use authentication service with JWT support and role-based authorization
-  
+
   - icon: 🎯
     title: TypeScript First
     details: Built from the ground up with TypeScript, providing excellent type safety and developer experience
-  
+
   - icon: 🔄
     title: Custom Hooks
     details: Powerful React hooks for service integration and state management
-  
+
   - icon: 🛠
     title: CLI Tools
     details: Boost productivity with project scaffolding and code generation tools
-  
+
   - icon: 📦
     title: Microservices Ready
     details: First-class support for building and managing microservices architecture
@@ -41,11 +41,10 @@ features:
   - icon: 🎨
     title: Customizable
     details: Flexible configuration and extensible architecture to meet your needs
-  
+
   - icon: 🔍
     title: Developer Experience
     details: Hot reloading, debugging tools, and comprehensive documentation
-
 ---
 
 ## Quick Start
@@ -87,9 +86,15 @@ class UserService {
 // Use in React components
 function UserList() {
   const { data, loading } = useService('user', 'getUsers');
-  
+
   if (loading) return <div>Loading...</div>;
-  return <ul>{data.map(user => <li>{user.name}</li>)}</ul>;
+  return (
+    <ul>
+      {data.map((user) => (
+        <li>{user.name}</li>
+      ))}
+    </ul>
+  );
 }
 ```
 
@@ -102,7 +107,7 @@ app.use('/api/protected', authService.authenticateToken);
 // React component
 function Login() {
   const { login } = useAuth();
-  
+
   const handleLogin = async () => {
     await login(credentials);
   };

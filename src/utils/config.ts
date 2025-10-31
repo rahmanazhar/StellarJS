@@ -45,8 +45,8 @@ export const loadConfigFromEnv = (): Partial<ServerConfig> => {
     port: process.env.PORT ? parseInt(process.env.PORT, 10) : 3000,
     auth: {
       jwtSecret: process.env.JWT_SECRET || '',
-      tokenExpiration: process.env.JWT_EXPIRATION || '24h'
-    }
+      tokenExpiration: process.env.JWT_EXPIRATION || '24h',
+    },
   };
 };
 
@@ -60,14 +60,14 @@ export const mergeConfig = <T extends Record<string, any>>(
   const merged = { ...defaults };
 
   for (const key in overrides) {
-    if (overrides.hasOwnProperty(key)) {
+    if (Object.prototype.hasOwnProperty.call(overrides, key)) {
       const value = overrides[key];
       if (value !== undefined) {
         if (typeof value === 'object' && !Array.isArray(value) && value !== null) {
-          merged[key] = mergeConfig(
-            merged[key] || ({} as any),
-            value as any
-          ) as T[Extract<keyof T, string>];
+          merged[key] = mergeConfig(merged[key] || ({} as any), value as any) as T[Extract<
+            keyof T,
+            string
+          >];
         } else {
           merged[key] = value as T[Extract<keyof T, string>];
         }

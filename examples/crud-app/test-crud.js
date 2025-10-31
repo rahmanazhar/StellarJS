@@ -13,7 +13,7 @@ const colors = {
   red: '\x1b[31m',
   yellow: '\x1b[33m',
   blue: '\x1b[36m',
-  reset: '\x1b[0m'
+  reset: '\x1b[0m',
 };
 
 let testsPassed = 0;
@@ -30,12 +30,12 @@ function makeRequest(method, path, data = null) {
       method,
       headers: {
         'Content-Type': 'application/json',
-      }
+      },
     };
 
     const req = http.request(url, options, (res) => {
       let body = '';
-      res.on('data', chunk => body += chunk);
+      res.on('data', (chunk) => (body += chunk));
       res.on('end', () => {
         try {
           const response = JSON.parse(body);
@@ -114,7 +114,7 @@ async function runTests() {
   await test('POST /api/todos - Create new todo', async () => {
     const newTodo = {
       title: 'Test Todo from Script',
-      description: 'This is a test todo created by the test script'
+      description: 'This is a test todo created by the test script',
     };
     const { status, data } = await makeRequest('POST', '/api/todos', newTodo);
     assert(status === 201, `Expected status 201, got ${status}`);
@@ -138,7 +138,7 @@ async function runTests() {
   await test('PUT /api/todos/:id - Update todo', async () => {
     const updates = {
       title: 'Updated Test Todo',
-      description: 'This todo has been updated'
+      description: 'This todo has been updated',
     };
     const { status, data } = await makeRequest('PUT', `/api/todos/${createdTodoId}`, updates);
     assert(status === 200, `Expected status 200, got ${status}`);
@@ -163,7 +163,7 @@ async function runTests() {
     assert(status === 200, `Expected status 200, got ${status}`);
     assert(data.success === true, 'Should return success');
     assert(Array.isArray(data.data), 'Should return array');
-    const allCompleted = data.data.every(todo => todo.completed === true);
+    const allCompleted = data.data.every((todo) => todo.completed === true);
     assert(allCompleted, 'All todos should be completed');
     log(`  Found ${data.count} completed todos`, 'blue');
   });
@@ -173,7 +173,7 @@ async function runTests() {
     const { status, data } = await makeRequest('GET', '/api/todos?completed=false');
     assert(status === 200, `Expected status 200, got ${status}`);
     assert(data.success === true, 'Should return success');
-    const allIncomplete = data.data.every(todo => todo.completed === false);
+    const allIncomplete = data.data.every((todo) => todo.completed === false);
     assert(allIncomplete, 'All todos should be incomplete');
     log(`  Found ${data.count} active todos`, 'blue');
   });

@@ -78,12 +78,7 @@ export const retry = async <T>(
     backoffMultiplier?: number;
   } = {}
 ): Promise<T> => {
-  const {
-    maxRetries = 3,
-    initialDelay = 1000,
-    maxDelay = 10000,
-    backoffMultiplier = 2
-  } = options;
+  const { maxRetries = 3, initialDelay = 1000, maxDelay = 10000, backoffMultiplier = 2 } = options;
 
   let lastError: Error;
   let delay = initialDelay;
@@ -93,7 +88,7 @@ export const retry = async <T>(
       return await fn();
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(formatError(error));
-      
+
       if (attempt < maxRetries) {
         await sleep(Math.min(delay, maxDelay));
         delay *= backoffMultiplier;
@@ -108,7 +103,7 @@ export const retry = async <T>(
  * Sleep for a specified duration
  */
 export const sleep = (ms: number): Promise<void> => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
 /**
@@ -137,7 +132,7 @@ export const throttle = <T extends (...args: any[]) => any>(
   fn: T,
   limit: number
 ): ((...args: Parameters<T>) => void) => {
-  let inThrottle: boolean = false;
+  let inThrottle = false;
 
   return (...args: Parameters<T>) => {
     if (!inThrottle) {
@@ -163,13 +158,13 @@ export const deepClone = <T>(obj: T): T => {
   }
 
   if (obj instanceof Array) {
-    return obj.map(item => deepClone(item)) as any;
+    return obj.map((item) => deepClone(item)) as any;
   }
 
   if (obj instanceof Object) {
     const clonedObj = {} as T;
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         clonedObj[key] = deepClone(obj[key]);
       }
     }
@@ -193,7 +188,7 @@ export const isEmpty = (obj: any): boolean => {
 /**
  * Generate a random string
  */
-export const randomString = (length: number = 32): string => {
+export const randomString = (length = 32): string => {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
   for (let i = 0; i < length; i++) {

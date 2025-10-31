@@ -17,7 +17,7 @@ export interface DatabaseConfig {
  */
 export class DatabaseManager {
   private connection: Connection | null = null;
-  private isConnecting: boolean = false;
+  private isConnecting = false;
 
   constructor(private config: DatabaseConfig) {}
 
@@ -39,7 +39,7 @@ export class DatabaseManager {
 
     try {
       logger.info('Connecting to database...');
-      
+
       const options: ConnectOptions = {
         ...this.config.options,
       };
@@ -154,7 +154,7 @@ export class DatabaseManager {
       if (!this.isConnected()) {
         return {
           healthy: false,
-          message: 'Database not connected'
+          message: 'Database not connected',
         };
       }
 
@@ -163,12 +163,14 @@ export class DatabaseManager {
 
       return {
         healthy: true,
-        message: 'Database connection healthy'
+        message: 'Database connection healthy',
       };
     } catch (error) {
       return {
         healthy: false,
-        message: `Database health check failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+        message: `Database health check failed: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
       };
     }
   }
@@ -192,7 +194,7 @@ let globalDbManager: DatabaseManager | null = null;
 export const initDatabase = async (config: DatabaseConfig): Promise<DatabaseManager> => {
   if (!globalDbManager) {
     globalDbManager = new DatabaseManager(config);
-    
+
     if (config.autoConnect !== false) {
       await globalDbManager.connect();
     }

@@ -1,16 +1,17 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig } from 'vitepress';
 
 export default defineConfig({
   title: 'StellarJS',
-  description: 'A modern fullstack JavaScript framework combining React with microservices architecture',
-  
+  description:
+    'A modern fullstack JavaScript framework combining React with microservices architecture',
+
   themeConfig: {
     logo: '/logo.png',
     nav: [
       { text: 'Guide', link: '/guide/' },
       { text: 'API', link: '/api/' },
       { text: 'Examples', link: '/examples/' },
-      { text: 'GitHub', link: 'https://github.com/rahmanazhar/StellarJS' }
+      { text: 'GitHub', link: 'https://github.com/rahmanazhar/StellarJS' },
     ],
 
     sidebar: {
@@ -20,8 +21,8 @@ export default defineConfig({
           items: [
             { text: 'What is StellarJS?', link: '/guide/' },
             { text: 'Getting Started', link: '/guide/getting-started' },
-            { text: 'Project Structure', link: '/guide/project-structure' }
-          ]
+            { text: 'Project Structure', link: '/guide/project-structure' },
+          ],
         },
         {
           text: 'Core Concepts',
@@ -30,8 +31,8 @@ export default defineConfig({
             { text: 'Services', link: '/guide/services' },
             { text: 'Authentication', link: '/guide/authentication' },
             { text: 'Routing', link: '/guide/routing' },
-            { text: 'State Management', link: '/guide/state-management' }
-          ]
+            { text: 'State Management', link: '/guide/state-management' },
+          ],
         },
         {
           text: 'Advanced',
@@ -39,9 +40,9 @@ export default defineConfig({
             { text: 'Custom Services', link: '/guide/custom-services' },
             { text: 'Middleware', link: '/guide/middleware' },
             { text: 'Testing', link: '/guide/testing' },
-            { text: 'Deployment', link: '/guide/deployment' }
-          ]
-        }
+            { text: 'Deployment', link: '/guide/deployment' },
+          ],
+        },
       ],
       '/api/': [
         {
@@ -49,23 +50,23 @@ export default defineConfig({
           items: [
             { text: 'StellarApp', link: '/api/stellar-app' },
             { text: 'StellarServer', link: '/api/stellar-server' },
-            { text: 'Authentication', link: '/api/authentication' }
-          ]
+            { text: 'Authentication', link: '/api/authentication' },
+          ],
         },
         {
           text: 'Hooks',
           items: [
             { text: 'useService', link: '/api/use-service' },
-            { text: 'useAuth', link: '/api/use-auth' }
-          ]
+            { text: 'useAuth', link: '/api/use-auth' },
+          ],
         },
         {
           text: 'CLI',
           items: [
             { text: 'Commands', link: '/api/cli-commands' },
-            { text: 'Configuration', link: '/api/cli-config' }
-          ]
-        }
+            { text: 'Configuration', link: '/api/cli-config' },
+          ],
+        },
       ],
       '/examples/': [
         {
@@ -73,27 +74,25 @@ export default defineConfig({
           items: [
             { text: 'Todo App', link: '/examples/todo-app' },
             { text: 'Authentication', link: '/examples/auth-example' },
-            { text: 'Custom Service', link: '/examples/custom-service' }
-          ]
+            { text: 'Custom Service', link: '/examples/custom-service' },
+          ],
         },
         {
           text: 'Advanced Examples',
           items: [
             { text: 'Microservices', link: '/examples/microservices' },
             { text: 'Real-time Chat', link: '/examples/chat-app' },
-            { text: 'File Upload', link: '/examples/file-upload' }
-          ]
-        }
-      ]
+            { text: 'File Upload', link: '/examples/file-upload' },
+          ],
+        },
+      ],
     },
 
-    socialLinks: [
-      { icon: 'github', link: 'https://github.com/rahmanazhar/StellarJS' }
-    ],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/rahmanazhar/StellarJS' }],
 
     footer: {
       message: 'Released under the MIT License.',
-      copyright: 'Copyright © 2023-present Rahman Azhar'
-    }
-  }
-})
+      copyright: 'Copyright © 2023-present Rahman Azhar',
+    },
+  },
+});

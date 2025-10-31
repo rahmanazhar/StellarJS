@@ -54,29 +54,31 @@ For detailed documentation, visit our [Documentation Site](https://stellarjs.dev
 ## 🌟 Example Usage
 
 ### Service Definition
+
 ```typescript
 // Define your service
 class UserService {
   async getUsers() {
     return [
       { id: 1, name: 'John Doe' },
-      { id: 2, name: 'Jane Smith' }
+      { id: 2, name: 'Jane Smith' },
     ];
   }
 }
 ```
 
 ### React Component
+
 ```typescript
 // Use in components
 function UserList() {
   const { data, loading } = useService('user', 'getUsers');
-  
+
   if (loading) return <div>Loading...</div>;
-  
+
   return (
     <ul>
-      {data.map(user => (
+      {data.map((user) => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
