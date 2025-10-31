@@ -1,88 +1,71 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { createTodoService } from './TodoService';
+import { TodoService } from './TodoService';
 
 // Load environment variables
 dotenv.config();
 
+// Initialize Express app
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// Request logging middleware
-app.use((req, res, next) => {
-  const start = Date.now();
-  res.on('finish', () => {
-    const duration = Date.now() - start;
-    console.log(`${req.method} ${req.path} ${res.statusCode} - ${duration}ms`);
-  });
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
   next();
 });
 
-// Create Todo service
-const todoService = createTodoService();
+// Initialize TodoService
+const todoService = new TodoService();
+
+// Health check
+app.get('/api/health', (req: Request, res: Response) => {
+  res.json({ success: true, message: 'StellarJS CRUD API is running' });
+});
 
 // Routes
-app.get('/api/todos', todoService.getAllTodos.bind(todoService));
-app.get('/api/todos/stats', todoService.getStats.bind(todoService));
-app.get('/api/todos/:id', todoService.getTodoById.bind(todoService));
-app.post('/api/todos', todoService.createTodo.bind(todoService));
-app.put('/api/todos/:id', todoService.updateTodo.bind(todoService));
-app.patch('/api/todos/:id/toggle', todoService.toggleTodo.bind(todoService));
-app.delete('/api/todos/:id', todoService.deleteTodo.bind(todoService));
-app.delete('/api/todos', todoService.deleteCompleted.bind(todoService));
-
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Server is running',
-    timestamp: new Date().toISOString()
-  });
-});
+app.get('/api/todos', (req: Request, res: Response) => todoService.getAllTodos(req, res));
+app.get('/api/todos/stats', (req: Request, res: Response) => todoService.getStats(req, res));
+app.get('/api/todos/:id', (req: Request, res: Response) => todoService.getTodoById(req, res));
+app.post('/api/todos', (req: Request, res: Response) => todoService.createTodo(req, res));
+app.put('/api/todos/:id', (req: Request, res: Response) => todoService.updateTodo(req, res));
+app.patch('/api/todos/:id/toggle', (req: Request, res: Response) => todoService.toggleTodo(req, res));
+app.delete('/api/todos/:id', (req: Request, res: Response) => todoService.deleteTodo(req, res));
+app.delete('/api/todos', (req: Request, res: Response) => todoService.deleteCompleted(req, res));
 
 // 404 handler
-app.use((req, res) => {
-  res.status(404).json({
-    success: false,
-    error: 'Route not found'
+app.use((req: Request, res: Response) => {
+  res.status(404).json({ 
+    success: false, 
+    error: 'Not Found',
+    message: `Route ${req.method} ${req.url} not found`
   });
 });
 
-// Error handler
-app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+// Error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error('Error:', err);
-  res.status(500).json({
-    success: false,
+  res.status(500).json({ 
+    success: false, 
     error: 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { details: err.message })
+    message: err.message 
   });
 });
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`
-╔════════════════════════════════════════╗
-║   StellarJS CRUD Example Server       ║
-║   Running on http://localhost:${PORT}   ║
-╚════════════════════════════════════════╝
-
-Available endpoints:
-  GET    /api/health
-  GET    /api/todos
-  GET    /api/todos/stats
-  GET    /api/todos/:id
-  POST   /api/todos
-  PUT    /api/todos/:id
-  PATCH  /api/todos/:id/toggle
-  DELETE /api/todos/:id
-  DELETE /api/todos (delete completed)
-  `);
+  console.log(`\n🚀 StellarJS CRUD API Server is running`);
+  console.log(`📡 URL: http://localhost:${PORT}`);
+  console.log(`📝 API Endpoints:`);
+  console.log(`   GET    /api/todos          - Get all todos`);
+  console.log(`   GET    /api/todos/stats    - Get statistics`);
+  console.log(`   GET    /api/todos/:id      - Get a specific todo`);
+  console.log(`   POST   /api/todos          - Create a new todo`);
+  console.log(`   PUT    /api/todos/:id      - Update a todo`);
+  console.log(`   PATCH  /api/todos/:id/toggle - Toggle completion`);
+  console.log(`   DELETE /api/todos/:id      - Delete a todo`);
+  console.log(`   DELETE /api/todos          - Delete completed todos\n`);
 });
-
-export default app;
