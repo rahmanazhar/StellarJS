@@ -131,7 +131,14 @@ describe('Hooks Tests', () => {
   });
 
   describe('useDebounce', () => {
-    jest.useFakeTimers();
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+    });
 
     it('should debounce the value', () => {
       const { result, rerender } = renderHook(
@@ -175,8 +182,6 @@ describe('Hooks Tests', () => {
 
       expect(result.current).toBe('update2');
     });
-
-    jest.useRealTimers();
   });
 
   describe('useToggle', () => {
@@ -302,7 +307,14 @@ describe('Hooks Tests', () => {
   });
 
   describe('useInterval', () => {
-    jest.useFakeTimers();
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+    });
 
     it('should call callback at specified interval', () => {
       const callback = jest.fn();
@@ -344,8 +356,6 @@ describe('Hooks Tests', () => {
 
       expect(callback).toHaveBeenCalledTimes(1);
     });
-
-    jest.useRealTimers();
   });
 
   describe('useWindowSize', () => {
