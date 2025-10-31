@@ -135,10 +135,48 @@ Closes #123
 
 ## Release Process
 
-1. Update version in package.json
-2. Update CHANGELOG.md
-3. Create a new release on GitHub
-4. Publish to npm
+StellarJS uses **automated semantic versioning and releases**. Releases are triggered automatically when changes are pushed to the `main` branch.
+
+### How It Works
+
+1. **Commit Convention**: All commits must follow [Conventional Commits](https://www.conventionalcommits.org/)
+2. **Automatic Version Bump**: Version is determined by commit types:
+   - `feat:` commits → **minor** version bump (1.0.0 → 1.1.0)
+   - `fix:`, `docs:`, `perf:`, `refactor:` → **patch** version bump (1.0.0 → 1.0.1)
+   - Commits with `BREAKING CHANGE:` → **major** version bump (1.0.0 → 2.0.0)
+3. **Automatic Changelog**: CHANGELOG.md is updated automatically
+4. **GitHub Release**: A GitHub release is created with release notes
+5. **NPM Publishing**: Package is automatically published to npm
+
+### For Contributors
+
+You don't need to worry about versioning! Just follow the commit convention:
+
+```bash
+# Feature (will bump minor version)
+git commit -m "feat(auth): add OAuth2 support"
+
+# Bug fix (will bump patch version)
+git commit -m "fix(server): resolve CORS issue"
+
+# Breaking change (will bump major version)
+git commit -m "feat(api): redesign authentication
+
+BREAKING CHANGE: Old auth tokens will no longer work."
+```
+
+### For Maintainers
+
+To trigger a release:
+
+1. Merge PRs to `main` branch
+2. GitHub Actions will automatically handle the rest
+
+Manual release (if needed):
+
+```bash
+npm run semantic-release
+```
 
 ## Questions?
 
