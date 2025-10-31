@@ -15,23 +15,37 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
-};
-global.localStorage = localStorageMock as any;
+// Mock localStorage and sessionStorage
+const createStorageMock = () => {
+  const store = new Map<string, string>();
 
-// Mock sessionStorage
-const sessionStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+  return {
+    getItem: jest.fn((key: string) => store.get(key) || null),
+    setItem: jest.fn((key: string, value: string) => {
+      store.set(key, value);
+    }),
+    removeItem: jest.fn((key: string) => {
+      store.delete(key);
+    }),
+    clear: jest.fn(() => {
+      store.clear();
+    }),
+    get length() {
+      return store.size;
+    },
+    key: jest.fn((index: number) => Array.from(store.keys())[index] || null),
+  };
 };
-global.sessionStorage = sessionStorageMock as any;
+
+Object.defineProperty(window, 'localStorage', {
+  value: createStorageMock(),
+  writable: true,
+});
+
+Object.defineProperty(window, 'sessionStorage', {
+  value: createStorageMock(),
+  writable: true,
+});
 
 // Suppress console errors in tests unless explicitly needed
 const originalError = console.error;

@@ -53,7 +53,7 @@ export function useAsync<T>(asyncFunction: (...args: any[]) => Promise<T>, immed
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
-): [T, (value: T | ((val: T) => T)) => void, () => void] {
+): [T, (value: T | ((val: T) => T) | undefined) => void, () => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
@@ -68,9 +68,15 @@ export function useLocalStorage<T>(
     }
   });
 
-  const setValue = (value: T | ((val: T) => T)) => {
+  const setValue = (value: T | ((val: T) => T) | undefined) => {
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
+
+      if (valueToStore === undefined) {
+        removeValue();
+        return;
+      }
+
       setStoredValue(valueToStore);
 
       if (typeof window !== 'undefined') {
@@ -101,7 +107,7 @@ export function useLocalStorage<T>(
 export function useSessionStorage<T>(
   key: string,
   initialValue: T
-): [T, (value: T | ((val: T) => T)) => void, () => void] {
+): [T, (value: T | ((val: T) => T) | undefined) => void, () => void] {
   const [storedValue, setStoredValue] = useState<T>(() => {
     if (typeof window === 'undefined') {
       return initialValue;
@@ -116,9 +122,15 @@ export function useSessionStorage<T>(
     }
   });
 
-  const setValue = (value: T | ((val: T) => T)) => {
+  const setValue = (value: T | ((val: T) => T) | undefined) => {
     try {
       const valueToStore = value instanceof Function ? value(storedValue) : value;
+
+      if (valueToStore === undefined) {
+        removeValue();
+        return;
+      }
+
       setStoredValue(valueToStore);
 
       if (typeof window !== 'undefined') {
