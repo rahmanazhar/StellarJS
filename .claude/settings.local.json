@@ -6,7 +6,9 @@
       "Bash(npm run type-check:*)",
       "Bash(git mv:*)",
       "Bash(git add:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npm install:*)",
+      "Bash(npm run lint:fix:*)"
     ],
     "deny": [],
     "ask": []
