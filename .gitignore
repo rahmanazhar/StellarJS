@@ -51,8 +51,9 @@ Thumbs.db
 .DS_Store
 
 # Package manager
+# Note: package-lock.json is tracked for consistent dependencies
+# yarn.lock and pnpm-lock.yaml are ignored since we use npm
 yarn.lock
-package-lock.json
 pnpm-lock.yaml
 
 # Optional npm cache directory
