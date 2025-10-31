@@ -53,16 +53,16 @@ export const formatError = (error: unknown): string => {
 export const tryCatch = async <T>(
   fn: () => Promise<T>,
   errorMessage?: string
-): Promise<[Error | null, T | null]> => {
+): Promise<{ success: true; data: T } | { success: false; error: Error }> => {
   try {
     const result = await fn();
-    return [null, result];
+    return { success: true, data: result };
   } catch (error) {
     const errorObj = error instanceof Error ? error : new Error(formatError(error));
     if (errorMessage) {
       errorObj.message = `${errorMessage}: ${errorObj.message}`;
     }
-    return [errorObj, null];
+    return { success: false, error: errorObj };
   }
 };
 
@@ -71,13 +71,27 @@ export const tryCatch = async <T>(
  */
 export const retry = async <T>(
   fn: () => Promise<T>,
-  options: {
-    maxRetries?: number;
-    initialDelay?: number;
-    maxDelay?: number;
-    backoffMultiplier?: number;
-  } = {}
+  maxRetriesOrOptions:
+    | number
+    | {
+        maxRetries?: number;
+        initialDelay?: number;
+        maxDelay?: number;
+        backoffMultiplier?: number;
+      } = {},
+  initialDelayParam?: number
 ): Promise<T> => {
+  // Support both old signature (maxRetries, delay) and new options object
+  const options =
+    typeof maxRetriesOrOptions === 'number'
+      ? {
+          maxRetries: maxRetriesOrOptions,
+          initialDelay: initialDelayParam || 1000,
+          maxDelay: 10000,
+          backoffMultiplier: 2,
+        }
+      : maxRetriesOrOptions;
+
   const { maxRetries = 3, initialDelay = 1000, maxDelay = 10000, backoffMultiplier = 2 } = options;
 
   let lastError: Error;
