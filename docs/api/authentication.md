@@ -43,6 +43,7 @@ interface LoginResponse {
 ```
 
 Example:
+
 ```typescript
 authService.login(req, res);
 ```
@@ -68,6 +69,7 @@ interface RegisterResponse {
 ```
 
 Example:
+
 ```typescript
 authService.register(req, res);
 ```
@@ -77,6 +79,7 @@ authService.register(req, res);
 Middleware to verify JWT tokens.
 
 Example:
+
 ```typescript
 app.use('/api/protected', authService.authenticateToken);
 ```
@@ -86,6 +89,7 @@ app.use('/api/protected', authService.authenticateToken);
 Middleware factory for role-based authorization.
 
 Example:
+
 ```typescript
 app.use('/api/admin', authService.requireRoles(['admin']));
 ```
@@ -101,28 +105,20 @@ import { useAuth } from 'stellar-js/hooks';
 ### Usage
 
 ```typescript
-const {
-  login,
-  register,
-  logout,
-  user,
-  isAuthenticated,
-  isLoading,
-  error
-} = useAuth();
+const { login, register, logout, user, isAuthenticated, isLoading, error } = useAuth();
 ```
 
 ### Return Value
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `login` | `(credentials: LoginCredentials) => Promise<LoginResponse>` | Function to log in a user |
-| `register` | `(data: RegisterData) => Promise<RegisterResponse>` | Function to register a new user |
-| `logout` | `() => void` | Function to log out the current user |
-| `user` | `User \| null` | The currently authenticated user |
-| `isAuthenticated` | `boolean` | Whether a user is currently authenticated |
-| `isLoading` | `boolean` | Whether an authentication operation is in progress |
-| `error` | `Error \| null` | Any authentication error that occurred |
+| Property          | Type                                                        | Description                                        |
+| ----------------- | ----------------------------------------------------------- | -------------------------------------------------- |
+| `login`           | `(credentials: LoginCredentials) => Promise<LoginResponse>` | Function to log in a user                          |
+| `register`        | `(data: RegisterData) => Promise<RegisterResponse>`         | Function to register a new user                    |
+| `logout`          | `() => void`                                                | Function to log out the current user               |
+| `user`            | `User \| null`                                              | The currently authenticated user                   |
+| `isAuthenticated` | `boolean`                                                   | Whether a user is currently authenticated          |
+| `isLoading`       | `boolean`                                                   | Whether an authentication operation is in progress |
+| `error`           | `Error \| null`                                             | Any authentication error that occurred             |
 
 ## Examples
 
@@ -135,13 +131,13 @@ import { createAuthService } from 'stellar-js/services';
 const server = createServer({
   port: 3000,
   auth: {
-    jwtSecret: process.env.JWT_SECRET
-  }
+    jwtSecret: process.env.JWT_SECRET,
+  },
 });
 
 const authService = createAuthService({
   jwtSecret: process.env.JWT_SECRET,
-  tokenExpiration: '24h'
+  tokenExpiration: '24h',
 });
 
 // Register auth routes
@@ -151,14 +147,14 @@ server.registerService({
     {
       path: '/login',
       method: 'POST',
-      handler: authService.login
+      handler: authService.login,
     },
     {
       path: '/register',
       method: 'POST',
-      handler: authService.register
-    }
-  ]
+      handler: authService.register,
+    },
+  ],
 });
 
 // Protected route example
@@ -171,20 +167,17 @@ server.registerService({
       middleware: [authService.authenticateToken],
       handler: async (req, res) => {
         res.json(req.user);
-      }
+      },
     },
     {
       path: '/admin',
       method: 'GET',
-      middleware: [
-        authService.authenticateToken,
-        authService.requireRoles(['admin'])
-      ],
+      middleware: [authService.authenticateToken, authService.requireRoles(['admin'])],
       handler: async (req, res) => {
         res.json({ message: 'Admin access granted' });
-      }
-    }
-  ]
+      },
+    },
+  ],
 });
 ```
 
@@ -278,18 +271,21 @@ function UserProfile() {
 ## Best Practices
 
 1. **Security**
+
    - Always use HTTPS in production
    - Implement proper password hashing
    - Use secure session management
    - Implement rate limiting for auth endpoints
 
 2. **Token Management**
+
    - Store tokens securely
    - Implement token refresh mechanism
    - Clear tokens on logout
    - Handle token expiration
 
 3. **Error Handling**
+
    - Provide clear error messages
    - Implement proper validation
    - Handle network errors

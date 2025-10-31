@@ -48,6 +48,7 @@ interface Route {
 ```
 
 Example:
+
 ```typescript
 server.registerService({
   name: 'users',
@@ -57,9 +58,9 @@ server.registerService({
       method: 'GET',
       handler: async (req, res) => {
         // Handle GET /api/users
-      }
-    }
-  ]
+      },
+    },
+  ],
 });
 ```
 
@@ -72,6 +73,7 @@ use(middleware: (req: Request, res: Response, next: NextFunction) => void): void
 ```
 
 Example:
+
 ```typescript
 server.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
@@ -88,6 +90,7 @@ async start(): Promise<void>
 ```
 
 Example:
+
 ```typescript
 await server.start();
 ```
@@ -101,6 +104,7 @@ async stop(): Promise<void>
 ```
 
 Example:
+
 ```typescript
 await server.stop();
 ```
@@ -131,8 +135,8 @@ import { createServer } from 'stellar-js/server';
 const server = createServer({
   port: 3000,
   auth: {
-    jwtSecret: process.env.JWT_SECRET
-  }
+    jwtSecret: process.env.JWT_SECRET,
+  },
 });
 
 // Register middleware
@@ -152,8 +156,8 @@ import { UserService } from './services/UserService';
 const server = createServer({
   port: 3000,
   auth: {
-    jwtSecret: process.env.JWT_SECRET
-  }
+    jwtSecret: process.env.JWT_SECRET,
+  },
 });
 
 // Register user service
@@ -166,7 +170,7 @@ server.registerService({
       handler: async (req, res) => {
         const users = await UserService.getUsers();
         res.json(users);
-      }
+      },
     },
     {
       path: '/users',
@@ -175,9 +179,9 @@ server.registerService({
       handler: async (req, res) => {
         const user = await UserService.createUser(req.body);
         res.status(201).json(user);
-      }
-    }
-  ]
+      },
+    },
+  ],
 });
 
 await server.start();
@@ -192,12 +196,12 @@ import { createAuthService } from 'stellar-js/services';
 const server = createServer({
   port: 3000,
   auth: {
-    jwtSecret: process.env.JWT_SECRET
-  }
+    jwtSecret: process.env.JWT_SECRET,
+  },
 });
 
 const authService = createAuthService({
-  jwtSecret: process.env.JWT_SECRET
+  jwtSecret: process.env.JWT_SECRET,
 });
 
 // Register auth routes
@@ -207,14 +211,14 @@ server.registerService({
     {
       path: '/login',
       method: 'POST',
-      handler: authService.login
+      handler: authService.login,
     },
     {
       path: '/register',
       method: 'POST',
-      handler: authService.register
-    }
-  ]
+      handler: authService.register,
+    },
+  ],
 });
 
 // Protected route example
@@ -227,9 +231,9 @@ server.registerService({
       middleware: [authService.authenticateToken],
       handler: async (req, res) => {
         res.json({ data: 'Protected data' });
-      }
-    }
-  ]
+      },
+    },
+  ],
 });
 ```
 
@@ -243,8 +247,8 @@ import { createServer } from 'stellar-js/server';
 const server = createServer({
   port: 3000,
   auth: {
-    jwtSecret: process.env.JWT_SECRET
-  }
+    jwtSecret: process.env.JWT_SECRET,
+  },
 });
 
 // Custom error handler
@@ -252,7 +256,7 @@ server.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
     error: 'Something went wrong!',
-    message: err.message
+    message: err.message,
   });
 });
 ```
@@ -260,16 +264,19 @@ server.use((err, req, res, next) => {
 ## Best Practices
 
 1. **Service Organization**
+
    - Group related routes under a single service
    - Use meaningful service names
    - Implement proper error handling in route handlers
 
 2. **Middleware Usage**
+
    - Apply authentication middleware where needed
    - Use middleware for request validation
    - Implement logging middleware for debugging
 
 3. **Security**
+
    - Always use HTTPS in production
    - Implement rate limiting
    - Validate and sanitize input

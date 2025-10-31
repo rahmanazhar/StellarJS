@@ -52,5 +52,14 @@ module.exports = {
       version: 'detect',
     },
   },
-  ignorePatterns: ['dist', 'build', 'node_modules', 'coverage', '*.config.js', 'cli', 'templates'],
+  ignorePatterns: [
+    'dist',
+    'build',
+    'node_modules',
+    'coverage',
+    '*.config.js',
+    'cli',
+    'templates',
+    'examples',
+  ],
 };

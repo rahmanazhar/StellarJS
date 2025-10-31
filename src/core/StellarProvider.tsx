@@ -21,9 +21,5 @@ interface StellarProviderProps {
 }
 
 export const StellarProvider: React.FC<StellarProviderProps> = ({ config, children }) => {
-  return (
-    <StellarContext.Provider value={{ config }}>
-      {children}
-    </StellarContext.Provider>
-  );
+  return <StellarContext.Provider value={{ config }}>{children}</StellarContext.Provider>;
 };

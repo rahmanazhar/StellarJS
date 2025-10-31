@@ -1,5 +1,5 @@
 import { render, RenderOptions } from '@testing-library/react';
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { StellarProvider } from '../core/StellarProvider';
 import { AppConfig } from '../types';
@@ -10,9 +10,9 @@ import { AppConfig } from '../types';
 const defaultConfig: AppConfig = {
   apiUrl: 'http://localhost:3000',
   auth: {
-    jwtSecret: 'test-secret'
+    jwtSecret: 'test-secret',
   },
-  services: {}
+  services: {},
 };
 
 /**
@@ -22,15 +22,13 @@ export function renderWithProviders(
   ui: ReactElement,
   config: Partial<AppConfig> = {},
   options?: Omit<RenderOptions, 'wrapper'>
-) {
+): ReturnType<typeof render> {
   const mergedConfig = { ...defaultConfig, ...config };
 
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <StellarProvider config={mergedConfig}>
-        <BrowserRouter>
-          {children}
-        </BrowserRouter>
+        <BrowserRouter>{children}</BrowserRouter>
       </StellarProvider>
     );
   }
@@ -48,7 +46,7 @@ export function createMockService<T>(methods: Partial<T>): T {
 /**
  * Mock fetch for testing
  */
-export function mockFetch(data: any, status: number = 200) {
+export function mockFetch(data: any, status = 200) {
   global.fetch = jest.fn(() =>
     Promise.resolve({
       ok: status >= 200 && status < 300,
@@ -63,7 +61,7 @@ export function mockFetch(data: any, status: number = 200) {
  * Wait for async updates
  */
 export function waitFor(ms: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 /**
@@ -89,7 +87,7 @@ export const mockLocalStorage = (() => {
     key: (index: number) => {
       const keys = Object.keys(store);
       return keys[index] || null;
-    }
+    },
   };
 })();
 
@@ -100,13 +98,13 @@ export function setupTestEnvironment() {
   // Mock localStorage
   Object.defineProperty(window, 'localStorage', {
     value: mockLocalStorage,
-    writable: true
+    writable: true,
   });
 
   // Mock sessionStorage
   Object.defineProperty(window, 'sessionStorage', {
     value: mockLocalStorage,
-    writable: true
+    writable: true,
   });
 
   // Mock console methods to reduce noise in tests
@@ -138,7 +136,7 @@ export function createMockRequest(options: {
     url: options.url || '/',
     get: function (header: string) {
       return this.headers[header.toLowerCase()];
-    }
+    },
   };
 }
 

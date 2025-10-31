@@ -5,19 +5,19 @@ const ora = require('ora');
 
 async function generateComponent(name, options) {
   const spinner = ora('Generating component...').start();
-  
+
   try {
     const componentDir = options.path || 'src/components';
     const componentPath = path.join(process.cwd(), componentDir, name);
-    
+
     // Create component directory
     await fs.mkdir(componentPath, { recursive: true });
-    
+
     // Create component files
     await Promise.all([
       createComponentFile(componentPath, name),
       createStyleFile(componentPath, name),
-      createTestFile(componentPath, name)
+      createTestFile(componentPath, name),
     ]);
 
     spinner.succeed(`Component ${chalk.bold(name)} generated successfully!`);
@@ -29,19 +29,19 @@ async function generateComponent(name, options) {
 
 async function generateService(name, options) {
   const spinner = ora('Generating service...').start();
-  
+
   try {
     const serviceDir = options.path || 'src/services';
     const servicePath = path.join(process.cwd(), serviceDir, name);
-    
+
     // Create service directory
     await fs.mkdir(servicePath, { recursive: true });
-    
+
     // Create service files
     await Promise.all([
       createServiceFile(servicePath, name),
       createServiceTypesFile(servicePath, name),
-      createServiceTestFile(servicePath, name)
+      createServiceTestFile(servicePath, name),
     ]);
 
     spinner.succeed(`Service ${chalk.bold(name)} generated successfully!`);
@@ -71,10 +71,7 @@ export const ${name}: React.FC<${name}Props> = (props) => {
 export default ${name};
 `;
 
-  await fs.writeFile(
-    path.join(componentPath, `${name}.tsx`),
-    componentContent.trim()
-  );
+  await fs.writeFile(path.join(componentPath, `${name}.tsx`), componentContent.trim());
 }
 
 async function createStyleFile(componentPath, name) {
@@ -84,10 +81,7 @@ async function createStyleFile(componentPath, name) {
 }
 `;
 
-  await fs.writeFile(
-    path.join(componentPath, `${name}.css`),
-    styleContent.trim()
-  );
+  await fs.writeFile(path.join(componentPath, `${name}.css`), styleContent.trim());
 }
 
 async function createTestFile(componentPath, name) {
@@ -104,10 +98,7 @@ describe('${name} Component', () => {
 });
 `;
 
-  await fs.writeFile(
-    path.join(componentPath, `${name}.test.tsx`),
-    testContent.trim()
-  );
+  await fs.writeFile(path.join(componentPath, `${name}.test.tsx`), testContent.trim());
 }
 
 async function createServiceFile(servicePath, name) {
@@ -140,10 +131,7 @@ export const create${name}Service = (config: any): ${name}Service => {
 };
 `;
 
-  await fs.writeFile(
-    path.join(servicePath, `${name}Service.ts`),
-    serviceContent.trim()
-  );
+  await fs.writeFile(path.join(servicePath, `${name}Service.ts`), serviceContent.trim());
 }
 
 async function createServiceTypesFile(servicePath, name) {
@@ -163,10 +151,7 @@ export namespace ${name}Types {
 }
 `;
 
-  await fs.writeFile(
-    path.join(servicePath, `${name}.types.ts`),
-    typesContent.trim()
-  );
+  await fs.writeFile(path.join(servicePath, `${name}.types.ts`), typesContent.trim());
 }
 
 async function createServiceTestFile(servicePath, name) {
@@ -188,13 +173,10 @@ describe('${name}Service', () => {
 });
 `;
 
-  await fs.writeFile(
-    path.join(servicePath, `${name}Service.test.ts`),
-    testContent.trim()
-  );
+  await fs.writeFile(path.join(servicePath, `${name}Service.test.ts`), testContent.trim());
 }
 
 module.exports = {
   generateComponent,
-  generateService
+  generateService,
 };

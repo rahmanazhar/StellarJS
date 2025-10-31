@@ -27,7 +27,7 @@ export class StellarServer {
 
   public registerService(serviceConfig: ServiceConfig): void {
     const { name, routes } = serviceConfig;
-    
+
     if (this.services.has(name)) {
       throw new Error(`Service with name ${name} is already registered`);
     }
@@ -35,15 +35,13 @@ export class StellarServer {
     // Register all routes for the service
     routes.forEach((route: Route) => {
       const path = `/api/${name}${route.path}`;
-      const method = route.method.toLowerCase();
-      
+      const method = route.method.toLowerCase() as 'get' | 'post' | 'put' | 'delete' | 'patch';
+
       if (typeof this.app[method] !== 'function') {
         throw new Error(`Invalid HTTP method: ${route.method}`);
       }
 
-      const handlers = route.middleware 
-        ? [...route.middleware, route.handler]
-        : [route.handler];
+      const handlers = route.middleware ? [...route.middleware, route.handler] : [route.handler];
 
       this.app[method](path, ...handlers);
     });
