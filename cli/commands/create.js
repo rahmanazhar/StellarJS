@@ -73,7 +73,7 @@ async function createPackageJson(projectPath, projectName) {
       'react-router-dom': '^6.14.0',
       express: '^4.18.2',
       cors: '^2.8.5',
-      'stellar-js': 'latest',
+      '@rahmanazhar/stellar-js': 'latest',
     },
     devDependencies: {
       '@types/react': '^18.2.14',
@@ -124,7 +124,7 @@ async function createSourceFiles(projectPath, options) {
   // Create App component
   const appContent = `
 import React from 'react';
-import { StellarApp } from 'stellar-js';
+import { StellarApp } from '@rahmanazhar/stellar-js';
 import Router from './Router';
 
 const config = {
