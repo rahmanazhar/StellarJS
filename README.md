@@ -7,8 +7,8 @@
     <a href="https://github.com/rahmanazhar/StellarJS/blob/main/LICENSE">
       <img src="https://img.shields.io/github/license/rahmanazhar/StellarJS" alt="License">
     </a>
-    <a href="https://www.npmjs.com/package/stellar-js">
-      <img src="https://img.shields.io/npm/v/stellar-js" alt="npm version">
+    <a href="https://www.npmjs.com/package/@rahmanazhar/stellar-js">
+      <img src="https://img.shields.io/npm/v/@rahmanazhar/stellar-js" alt="npm version">
     </a>
     <a href="https://github.com/rahmanazhar/StellarJS/stargazers">
       <img src="https://img.shields.io/github/stars/rahmanazhar/StellarJS" alt="GitHub Stars">
@@ -35,10 +35,10 @@
 
 ```bash
 # Create a new project using npx (recommended)
-npx stellar-js create my-app
+npx @rahmanazhar/stellar-js create my-app
 
 # Or install globally
-npm install -g stellar-js
+npm install -g @rahmanazhar/stellar-js
 stellar create my-app
 ```
 
@@ -46,7 +46,7 @@ stellar create my-app
 
 ```bash
 # Create a new StellarJS project
-npx stellar-js create my-app
+npx @rahmanazhar/stellar-js create my-app
 
 # Navigate to project directory
 cd my-app
