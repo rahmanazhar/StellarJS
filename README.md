@@ -62,7 +62,7 @@ Visit [http://localhost:3001](http://localhost:3001) to see your app in action!
 StellarJS v1.0.0 comes with enterprise-grade security enabled out of the box:
 
 ```typescript
-import { createServer } from 'stellar-js';
+import { createServer } from '@rahmanazhar/stellar-js';
 
 const server = createServer({
   port: 3000,
