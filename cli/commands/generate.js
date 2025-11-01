@@ -15,9 +15,9 @@ async function generateComponent(name, options) {
 
     // Create component files
     await Promise.all([
-      createComponentFile(componentPath, name),
-      createStyleFile(componentPath, name),
-      createTestFile(componentPath, name),
+      createComponentFile(componentPath, name, options),
+      createStyleFile(componentPath, name, options),
+      createTestFile(componentPath, name, options),
     ]);
 
     spinner.succeed(`Component ${chalk.bold(name)} generated successfully!`);
@@ -51,8 +51,17 @@ async function generateService(name, options) {
   }
 }
 
-async function createComponentFile(componentPath, name) {
-  const componentContent = `
+async function createComponentFile(componentPath, name, options = {}) {
+  const isPhpComponent = options.php || options.crud;
+  const componentContent = isPhpComponent
+    ? createPhpComponentContent(name)
+    : createBasicComponentContent(name);
+
+  await fs.writeFile(path.join(componentPath, `${name}.tsx`), componentContent.trim());
+}
+
+function createBasicComponentContent(name) {
+  return `
 import React from 'react';
 import './${name}.css';
 
@@ -70,31 +79,286 @@ export const ${name}: React.FC<${name}Props> = (props) => {
 
 export default ${name};
 `;
-
-  await fs.writeFile(path.join(componentPath, `${name}.tsx`), componentContent.trim());
 }
 
-async function createStyleFile(componentPath, name) {
-  const styleContent = `
-.${name.toLowerCase()} {
-  /* Component styles */
+function createPhpComponentContent(name) {
+  const resourceName = name.replace(/List$|Table$|Grid$/, '').toLowerCase();
+
+  return `
+import React, { useState, useEffect } from 'react';
+import { useStellarPhp } from '../../utils/php-client';
+import './${name}.css';
+
+interface ${name}Props {
+  // Define your props here
 }
+
+interface ${resourceName.charAt(0).toUpperCase() + resourceName.slice(1)} {
+  id: number;
+  name: string;
+  email?: string;
+  created_at: string;
+  updated_at?: string;
+}
+
+export const ${name}: React.FC<${name}Props> = (props) => {
+  const [data, setData] = useState<${
+    resourceName.charAt(0).toUpperCase() + resourceName.slice(1)
+  }[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const phpClient = useStellarPhp();
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await phpClient.findAll('${resourceName}s');
+      setData(result);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this item?')) {
+      return;
+    }
+
+    try {
+      await phpClient.remove('${resourceName}s', id);
+      setData(data.filter(item => item.id !== id));
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete item');
+    }
+  };
+
+  const handleRefresh = () => {
+    loadData();
+  };
+
+  if (loading) {
+    return (
+      <div className="${name.toLowerCase()}">
+        <div className="${name.toLowerCase()}__loading">Loading...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="${name.toLowerCase()}">
+        <div className="${name.toLowerCase()}__error">
+          Error: {error}
+          <button onClick={handleRefresh} style={{ marginLeft: '1rem' }}>
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="${name.toLowerCase()}">
+      <div className="${name.toLowerCase()}__header">
+        <h2>${name}</h2>
+        <button onClick={handleRefresh}>Refresh</button>
+      </div>
+      
+      {data.length === 0 ? (
+        <p>No items found.</p>
+      ) : (
+        <div className="${name.toLowerCase()}__list">
+          {data.map((item) => (
+            <div key={item.id} className="${name.toLowerCase()}__item">
+              <div className="${name.toLowerCase()}__item-content">
+                <h3>{item.name}</h3>
+                {item.email && <p>Email: {item.email}</p>}
+                <small>Created: {new Date(item.created_at).toLocaleDateString()}</small>
+              </div>
+              <div className="${name.toLowerCase()}__item-actions">
+                <button 
+                  onClick={() => handleDelete(item.id)}
+                  className="${name.toLowerCase()}__delete-btn"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ${name};
 `;
+}
+
+async function createStyleFile(componentPath, name, options = {}) {
+  const isPhpComponent = options.php || options.crud;
+
+  const styleContent = isPhpComponent
+    ? createPhpComponentStyles(name)
+    : createBasicComponentStyles(name);
 
   await fs.writeFile(path.join(componentPath, `${name}.css`), styleContent.trim());
 }
 
-async function createTestFile(componentPath, name) {
+function createBasicComponentStyles(name) {
+  return `
+.${name.toLowerCase()} {
+  /* Component styles */
+}
+`;
+}
+
+function createPhpComponentStyles(name) {
+  return `
+.${name.toLowerCase()} {
+  padding: 1rem;
+}
+
+.${name.toLowerCase()}__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.${name.toLowerCase()}__loading {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+}
+
+.${name.toLowerCase()}__error {
+  background-color: #fee;
+  border: 1px solid #fcc;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+}
+
+.${name.toLowerCase()}__list {
+  display: grid;
+  gap: 1rem;
+}
+
+.${name.toLowerCase()}__item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #fff;
+}
+
+.${name.toLowerCase()}__item-content h3 {
+  margin: 0 0 0.5rem 0;
+  color: #333;
+}
+
+.${name.toLowerCase()}__item-content p {
+  margin: 0 0 0.25rem 0;
+  color: #666;
+}
+
+.${name.toLowerCase()}__item-content small {
+  color: #999;
+}
+
+.${name.toLowerCase()}__item-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.${name.toLowerCase()}__delete-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.${name.toLowerCase()}__delete-btn:hover {
+  background: #c82333;
+}
+
+button {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+button:hover {
+  background: #0056b3;
+}
+`;
+}
+
+async function createTestFile(componentPath, name, options = {}) {
+  const isPhpComponent = options.php || options.crud;
+
   const testContent = `
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import ${name} from './${name}';
+
+${
+  isPhpComponent
+    ? `
+// Mock the PHP client
+jest.mock('../../utils/php-client', () => ({
+  useStellarPhp: () => ({
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    delete: jest.fn(),
+    findAll: jest.fn(() => Promise.resolve([])),
+    findById: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    remove: jest.fn(),
+  })
+}));
+`
+    : ''
+}
 
 describe('${name} Component', () => {
   it('renders without crashing', () => {
     render(<${name} />);
     // Add your test assertions here
   });
+  
+  ${
+    isPhpComponent
+      ? `
+  it('displays loading state initially', () => {
+    render(<${name} />);
+    expect(screen.getByText(/loading/i)).toBeInTheDocument();
+  });
+  `
+      : ''
+  }
 });
 `;
 

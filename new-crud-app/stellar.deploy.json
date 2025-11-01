@@ -1,0 +1,29 @@
+{
+  "servers": {
+    "production": {
+      "type": "apache",
+      "host": "your-server.com",
+      "username": "username",
+      "remotePath": "/var/www/html",
+      "domain": "myapp.com",
+      "uploadMethod": "sftp",
+      "generatePhp": true,
+      "database": {
+        "name": "stellar_db",
+        "user": "root",
+        "password": ""
+      }
+    },
+    "staging": {
+      "type": "nginx",
+      "host": "staging.your-server.com",
+      "username": "username",
+      "remotePath": "/var/www/staging",
+      "domain": "staging.example.com",
+      "uploadMethod": "sftp",
+      "generatePhp": false
+    }
+  },
+  "buildCommand": "npm run build",
+  "excludeFiles": ["node_modules", ".git", ".env.local", "*.log", "src", "tests"]
+}
