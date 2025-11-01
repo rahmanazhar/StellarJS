@@ -37,6 +37,7 @@
   "author": "Rahman Azhar",
   "license": "MIT",
   "dependencies": {
+    "axios": "^1.13.1",
     "bcryptjs": "^2.4.3",
     "chalk": "^4.1.2",
     "commander": "^11.0.0",
