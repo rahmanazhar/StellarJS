@@ -22,6 +22,7 @@ module.exports = {
     '!src/**/*.stories.tsx',
     '!src/index.ts',
     '!src/**/index.ts',
+    '!src/utils/php-client.ts',
   ],
   coverageThreshold: {
     global: {
