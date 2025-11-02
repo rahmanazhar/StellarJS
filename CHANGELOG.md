@@ -5,6 +5,28 @@ All notable changes to StellarJS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.0.0 (2025-11-02)
+
+- fix: Add axios dependency and fix TypeScript errors in php-client.ts ([d9a58e7](https://github.com/rahmanazhar/StellarJS/commit/d9a58e7))
+- fix: Add package-lock.json for CI/CD consistency ([c9907c6](https://github.com/rahmanazhar/StellarJS/commit/c9907c6))
+- fix: Exclude php-client.ts from coverage requirements ([b49ad87](https://github.com/rahmanazhar/StellarJS/commit/b49ad87))
+- fix: Fix test suite failures and improve test infrastructure ([0f944b8](https://github.com/rahmanazhar/StellarJS/commit/0f944b8))
+- fix: Resolve remaining TypeScript and ESLint errors ([7d863df](https://github.com/rahmanazhar/StellarJS/commit/7d863df))
+- fix: Resolve TypeScript and ESLint errors ([cd51b23](https://github.com/rahmanazhar/StellarJS/commit/cd51b23))
+- fix: Update npm package name to @rahmanazhar/stellar-js in README ([0bc5b78](https://github.com/rahmanazhar/StellarJS/commit/0bc5b78))
+- fix: Update npm package references in README for correct usage ([f46583f](https://github.com/rahmanazhar/StellarJS/commit/f46583f))
+- fix(ci): Update @semantic-release/gitlab to v13.2.9 and fix cache configuration ([a927db5](https://github.com/rahmanazhar/StellarJS/commit/a927db5))
+- feat: Add deployment infrastructure and update dependencies ([93fc1af](https://github.com/rahmanazhar/StellarJS/commit/93fc1af))
+- feat: Add ESLint, Prettier, Jest configs and comprehensive tests ([54845b5](https://github.com/rahmanazhar/StellarJS/commit/54845b5))
+- feat: Add routing and state management components with type safety ([62015bd](https://github.com/rahmanazhar/StellarJS/commit/62015bd))
+- feat: add testing utilities and configuration validation ([564e55e](https://github.com/rahmanazhar/StellarJS/commit/564e55e))
+- feat: Implement automated npm publishing and release process ([658d8e1](https://github.com/rahmanazhar/StellarJS/commit/658d8e1))
+- feat: Implement GitLab CI/CD pipeline and semantic-release configuration ([05eb191](https://github.com/rahmanazhar/StellarJS/commit/05eb191))
+- feat: Initialize StellarJS CRUD Example with full stack implementation ([351c190](https://github.com/rahmanazhar/StellarJS/commit/351c190))
+- feat: Refactor index.ts for improved structure and logging ([0bd9400](https://github.com/rahmanazhar/StellarJS/commit/0bd9400))
+- chore: Remove new-crud-app project files ([9fed6cd](https://github.com/rahmanazhar/StellarJS/commit/9fed6cd))
+- main: initial commit ([502c438](https://github.com/rahmanazhar/StellarJS/commit/502c438))
+
 ## [1.0.0] - 2025-10-31
 
 ### 🎉 Major Release - Enterprise Security & Production Ready
