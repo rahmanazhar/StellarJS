@@ -5,7 +5,9 @@ This directory contains project templates used by the StellarJS CLI.
 ## Available Templates
 
 ### Basic Template
+
 Located in `basic/` - A minimal StellarJS application with:
+
 - React frontend with routing
 - Express backend with StellarJS server
 - Basic authentication setup

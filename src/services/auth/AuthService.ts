@@ -23,12 +23,12 @@ export class AuthService {
       // 1. Fetch user from database
       // 2. Verify password with bcrypt.compare
       // This is a simplified example
-      
+
       const token = this.generateToken({ id: '1', email });
-      
+
       res.json({
         token,
-        user: { email }
+        user: { email },
       });
     } catch (error) {
       res.status(500).json({ error: 'Authentication failed' });
@@ -57,7 +57,7 @@ export class AuthService {
       res.status(201).json({
         message: 'User registered successfully',
         token,
-        user: { email }
+        user: { email },
       });
     } catch (error) {
       res.status(500).json({ error: 'Registration failed' });
@@ -83,25 +83,23 @@ export class AuthService {
   }
 
   private generateToken(user: Partial<AuthUser>): string {
-    return jwt.sign(
-      user,
-      this.config.jwtSecret,
-      { expiresIn: this.config.tokenExpiration || '24h' }
-    );
+    return jwt.sign(user, this.config.jwtSecret, {
+      expiresIn: this.config.tokenExpiration || '24h',
+    });
   }
 
   // Middleware factory for role-based authorization
   public requireRoles(roles: string[]) {
     return (req: Request, res: Response, next: NextFunction) => {
       const user = (req as any).user as AuthUser;
-      
+
       if (!user.roles) {
         res.status(403).json({ error: 'User has no roles assigned' });
         return;
       }
 
-      const hasRequiredRole = roles.some(role => user.roles?.includes(role));
-      
+      const hasRequiredRole = roles.some((role) => user.roles?.includes(role));
+
       if (!hasRequiredRole) {
         res.status(403).json({ error: 'Insufficient permissions' });
         return;

@@ -8,14 +8,14 @@ function About() {
       <header className="about-header">
         <h1>About StellarJS</h1>
       </header>
-      
+
       <main className="about-content">
         <section className="about-section">
           <h2>What is StellarJS?</h2>
           <p>
-            StellarJS is a modern fullstack JavaScript framework that combines 
-            React frontend with Express-based microservices architecture. It provides 
-            a complete solution for building scalable web applications.
+            StellarJS is a modern fullstack JavaScript framework that combines React frontend with
+            Express-based microservices architecture. It provides a complete solution for building
+            scalable web applications.
           </p>
         </section>
 
@@ -33,9 +33,7 @@ function About() {
 
         <section className="about-section">
           <h2>Get Started</h2>
-          <p>
-            Start building your next great app with StellarJS today!
-          </p>
+          <p>Start building your next great app with StellarJS today!</p>
           <Link to="/" className="btn btn-primary">
             Back to Home
           </Link>

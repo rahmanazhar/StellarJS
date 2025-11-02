@@ -14,7 +14,11 @@ interface UseServiceState<T> {
   loading: boolean;
 }
 
-export function useService<T = any>(serviceName: string, method: string, options: UseServiceOptions = {}) {
+export function useService<T = any>(
+  serviceName: string,
+  method: string,
+  options: UseServiceOptions = {}
+) {
   const { config } = useStellar();
   const [state, setState] = useState<UseServiceState<T>>({
     data: null,
@@ -22,35 +26,38 @@ export function useService<T = any>(serviceName: string, method: string, options
     loading: false,
   });
 
-  const execute = useCallback(async (...args: any[]): Promise<ServiceResponse<T>> => {
-    try {
-      setState(prev => ({ ...prev, loading: true, error: null }));
+  const execute = useCallback(
+    async (...args: any[]): Promise<ServiceResponse<T>> => {
+      try {
+        setState((prev) => ({ ...prev, loading: true, error: null }));
 
-      const service = config.services[serviceName];
-      if (!service) {
-        throw new Error(`Service "${serviceName}" not found`);
+        const service = config.services[serviceName];
+        if (!service) {
+          throw new Error(`Service "${serviceName}" not found`);
+        }
+
+        if (typeof service[method] !== 'function') {
+          throw new Error(`Method "${method}" not found in service "${serviceName}"`);
+        }
+
+        const result = await service[method](...args);
+
+        setState((prev) => ({ ...prev, data: result.data, loading: false }));
+
+        options.onSuccess?.(result.data);
+
+        return result;
+      } catch (error) {
+        const errorObj = error instanceof Error ? error : new Error(String(error));
+        setState((prev) => ({ ...prev, error: errorObj, loading: false }));
+
+        options.onError?.(errorObj);
+
+        throw errorObj;
       }
-
-      if (typeof service[method] !== 'function') {
-        throw new Error(`Method "${method}" not found in service "${serviceName}"`);
-      }
-
-      const result = await service[method](...args);
-      
-      setState(prev => ({ ...prev, data: result.data, loading: false }));
-      
-      options.onSuccess?.(result.data);
-      
-      return result;
-    } catch (error) {
-      const errorObj = error instanceof Error ? error : new Error(String(error));
-      setState(prev => ({ ...prev, error: errorObj, loading: false }));
-      
-      options.onError?.(errorObj);
-      
-      throw errorObj;
-    }
-  }, [serviceName, method, config.services, options]);
+    },
+    [serviceName, method, config.services, options]
+  );
 
   // Handle immediate execution if specified
   useState(() => {
@@ -77,7 +84,7 @@ export function useService<T = any>(serviceName: string, method: string, options
 export function useAuth() {
   const login = useService('auth', 'login');
   const register = useService('auth', 'register');
-  
+
   return {
     login: login.execute,
     register: register.execute,

@@ -5,9 +5,9 @@ import Router from './Router';
 const config = {
   apiUrl: process.env.REACT_APP_API_URL || 'http://localhost:3000',
   auth: {
-    jwtSecret: process.env.JWT_SECRET || 'your-secret-key'
+    jwtSecret: process.env.JWT_SECRET || 'your-secret-key',
   },
-  services: {}
+  services: {},
 };
 
 function App() {
