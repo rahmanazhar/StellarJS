@@ -5,12 +5,10 @@ image: node:20
 
 # Cache npm dependencies
 cache:
-  key:
-    files:
-      - package-lock.json
+  key: "$CI_COMMIT_REF_SLUG"
   paths:
-    - node_modules/
     - .npm/
+  policy: pull-push
 
 # Define pipeline stages
 stages:
