@@ -1,0 +1,171 @@
+# GitLab CI/CD Pipeline for StellarJS
+# Based on GitHub Actions workflow
+
+image: node:20
+
+# Cache npm dependencies
+cache:
+  key:
+    files:
+      - package-lock.json
+  paths:
+    - node_modules/
+    - .npm/
+
+# Define pipeline stages
+stages:
+  - lint
+  - test
+  - build
+  - release
+
+# Global variables
+variables:
+  NPM_CONFIG_CACHE: "$CI_PROJECT_DIR/.npm"
+  NODE_OPTIONS: "--max-old-space-size=4096"
+
+# Before script - install dependencies
+.install_dependencies: &install_dependencies
+  before_script:
+    - npm ci --cache $NPM_CONFIG_CACHE --prefer-offline
+
+#########################
+# LINT STAGE
+#########################
+
+lint:eslint:
+  stage: lint
+  <<: *install_dependencies
+  script:
+    - npm run lint
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+lint:format:
+  stage: lint
+  <<: *install_dependencies
+  script:
+    - npm run format:check
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+lint:typecheck:
+  stage: lint
+  <<: *install_dependencies
+  script:
+    - npm run type-check
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+#########################
+# TEST STAGE
+#########################
+
+.test_template: &test_template
+  stage: test
+  <<: *install_dependencies
+  script:
+    - npm run test:ci
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+  artifacts:
+    when: always
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage/cobertura-coverage.xml
+    paths:
+      - coverage/
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+test:node-16:
+  <<: *test_template
+  image: node:16
+
+test:node-18:
+  <<: *test_template
+  image: node:18
+
+test:node-20:
+  <<: *test_template
+  image: node:20
+
+#########################
+# BUILD STAGE
+#########################
+
+build:
+  stage: build
+  <<: *install_dependencies
+  script:
+    - npm run build
+    - ls -la dist/
+  artifacts:
+    paths:
+      - dist/
+    expire_in: 1 week
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "develop"
+
+#########################
+# RELEASE STAGE
+#########################
+
+release:
+  stage: release
+  image: node:20
+  only:
+    - main
+  except:
+    variables:
+      - $CI_COMMIT_MESSAGE =~ /\[skip ci\]/
+  before_script:
+    - npm ci --cache $NPM_CONFIG_CACHE --prefer-offline
+    # Configure git for semantic-release
+    - git config --global user.email "ci@gitlab.com"
+    - git config --global user.name "GitLab CI"
+    # Set up git credentials for pushing tags and commits
+    - git remote set-url origin https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
+  script:
+    - npm run build
+    - npm run lint
+    # Run semantic-release for automatic versioning and publishing
+    - npx semantic-release --extends .releaserc.gitlab.json
+  artifacts:
+    paths:
+      - dist/
+      - dist-package/
+      - CHANGELOG.md
+    expire_in: 30 days
+  environment:
+    name: production
+    url: https://www.npmjs.com/package/@rahmanazhar/stellar-js
+
+# Publish to NPM registry (triggered by semantic-release)
+publish:npm:
+  stage: release
+  image: node:20
+  only:
+    - tags
+  before_script:
+    - npm ci --cache $NPM_CONFIG_CACHE --prefer-offline
+    # Set up NPM authentication
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+  script:
+    - npm run build
+    - npm publish --access public
+  environment:
+    name: npm-registry
+    url: https://www.npmjs.com/package/@rahmanazhar/stellar-js
+  when: manual
