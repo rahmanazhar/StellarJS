@@ -22,8 +22,8 @@ export class UserService {
       const users = Array.from(this.users.values());
       res.json({ success: true, data: users });
     } catch (error) {
-      res.status(500).json({ 
-        error: { message: 'Failed to fetch users' } 
+      res.status(500).json({
+        error: { message: 'Failed to fetch users' },
       });
     }
   }
@@ -37,16 +37,16 @@ export class UserService {
       const user = this.users.get(id);
 
       if (!user) {
-        res.status(404).json({ 
-          error: { message: 'User not found' } 
+        res.status(404).json({
+          error: { message: 'User not found' },
         });
         return;
       }
 
       res.json({ success: true, data: user });
     } catch (error) {
-      res.status(500).json({ 
-        error: { message: 'Failed to fetch user' } 
+      res.status(500).json({
+        error: { message: 'Failed to fetch user' },
       });
     }
   }
@@ -59,8 +59,8 @@ export class UserService {
       const { name, email } = req.body;
 
       if (!name || !email) {
-        res.status(400).json({ 
-          error: { message: 'Name and email are required' } 
+        res.status(400).json({
+          error: { message: 'Name and email are required' },
         });
         return;
       }
@@ -71,8 +71,8 @@ export class UserService {
 
       res.status(201).json({ success: true, data: user });
     } catch (error) {
-      res.status(500).json({ 
-        error: { message: 'Failed to create user' } 
+      res.status(500).json({
+        error: { message: 'Failed to create user' },
       });
     }
   }
@@ -87,8 +87,8 @@ export class UserService {
 
       const user = this.users.get(id);
       if (!user) {
-        res.status(404).json({ 
-          error: { message: 'User not found' } 
+        res.status(404).json({
+          error: { message: 'User not found' },
         });
         return;
       }
@@ -98,8 +98,8 @@ export class UserService {
 
       res.json({ success: true, data: updatedUser });
     } catch (error) {
-      res.status(500).json({ 
-        error: { message: 'Failed to update user' } 
+      res.status(500).json({
+        error: { message: 'Failed to update user' },
       });
     }
   }
@@ -112,8 +112,8 @@ export class UserService {
       const { id } = req.params;
 
       if (!this.users.has(id)) {
-        res.status(404).json({ 
-          error: { message: 'User not found' } 
+        res.status(404).json({
+          error: { message: 'User not found' },
         });
         return;
       }
@@ -121,8 +121,8 @@ export class UserService {
       this.users.delete(id);
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({ 
-        error: { message: 'Failed to delete user' } 
+      res.status(500).json({
+        error: { message: 'Failed to delete user' },
       });
     }
   }

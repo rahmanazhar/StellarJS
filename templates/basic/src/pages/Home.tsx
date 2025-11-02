@@ -9,7 +9,7 @@ function Home() {
         <h1>⭐ Welcome to StellarJS</h1>
         <p>A modern fullstack JavaScript framework</p>
       </header>
-      
+
       <main className="home-content">
         <section className="features">
           <h2>Get Started</h2>
@@ -37,8 +37,8 @@ function Home() {
           <Link to="/about" className="btn btn-primary">
             Learn More
           </Link>
-          <a 
-            href="https://github.com/rahmanazhar/StellarJS" 
+          <a
+            href="https://github.com/rahmanazhar/StellarJS"
             className="btn btn-secondary"
             target="_blank"
             rel="noopener noreferrer"
