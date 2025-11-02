@@ -19,5 +19,11 @@ module.exports = {
       ],
     ],
     'subject-case': [2, 'always', 'sentence-case'],
+    // Remove length limits on commit messages
+    'header-max-length': [0, 'always', Infinity],
+    'body-max-length': [0, 'always', Infinity],
+    'body-max-line-length': [0, 'always', Infinity],
+    'footer-max-length': [0, 'always', Infinity],
+    'footer-max-line-length': [0, 'always', Infinity],
   },
 };
