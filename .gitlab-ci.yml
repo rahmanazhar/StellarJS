@@ -128,8 +128,6 @@ release:
   except:
     variables:
       - $CI_COMMIT_MESSAGE =~ /\[skip ci\]/
-  variables:
-    SEMANTIC_RELEASE_CONFIG: ".releaserc.gitlab.json"
   before_script:
     - npm ci --cache $NPM_CONFIG_CACHE --prefer-offline
     # Configure git for semantic-release
@@ -140,10 +138,8 @@ release:
   script:
     - npm run build
     - npm run lint
-    # Verify config file exists
-    - ls -la .releaserc.gitlab.json
-    # Run semantic-release for automatic versioning and publishing
-    - npx semantic-release -e .releaserc.gitlab.json
+    # Run semantic-release with GitLab-specific config
+    - npx semantic-release -c .releaserc.gitlab.json
   artifacts:
     paths:
       - dist/
