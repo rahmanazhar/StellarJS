@@ -33,6 +33,9 @@ yarn-error.log*
 *.swo
 .vs/
 
+# Claude Code
+.claude/
+
 # TypeScript
 *.tsbuildinfo
 
