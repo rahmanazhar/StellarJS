@@ -36,6 +36,11 @@ export class StellarServer {
       : developmentCors;
     this.app.use(corsMiddleware);
 
+    // Body parsing with size limits - must come BEFORE security middleware
+    // so that xss-clean, mongoSanitize, and sanitizeInputs can operate on parsed bodies
+    this.app.use(express.json({ limit: '10mb' }));
+    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
     // Security middleware stack
     const environment = process.env.NODE_ENV || 'development';
     const securityMiddlewares = this.config.security
@@ -46,10 +51,6 @@ export class StellarServer {
 
     securityMiddlewares.forEach((middleware) => this.app.use(middleware));
     logger.info('Security middleware enabled');
-
-    // Body parsing with size limits
-    this.app.use(express.json({ limit: '10mb' }));
-    this.app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
     // Request logging
     this.app.use(requestLogger);
