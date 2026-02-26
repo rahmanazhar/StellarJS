@@ -68,7 +68,7 @@ export interface ServiceConfig {
 
 export interface Route {
   path: string;
-  method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+  method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   handler: (req: any, res: any) => void;
   middleware?: any[];
 }

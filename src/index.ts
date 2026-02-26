@@ -73,8 +73,24 @@ export type {
 export { useService, useAuth } from './hooks/useService';
 export * from './hooks';
 
+// Microservices
+export {
+  ServiceRegistry,
+  InterServiceClient,
+  initServiceRegistry,
+  getServiceRegistry,
+  createInterServiceClient,
+} from './server/microservices';
+export type {
+  ServiceInfo,
+  ServiceRegistryOptions,
+  InterServiceClientOptions,
+} from './server/microservices';
+
 // Services
 export { AuthService, createAuthService, createAuthMiddleware } from './services/auth/AuthService';
+export { UserModel } from './services/auth/UserModel';
+export type { IUser } from './services/auth/UserModel';
 export { UserService, createUserService } from './services/user/UserService';
 
 // Utils

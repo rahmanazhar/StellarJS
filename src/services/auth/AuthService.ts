@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcryptjs';
+import crypto from 'crypto';
 import { AuthConfig, AuthUser } from '../../types';
+import { UserModel } from './UserModel';
 
 export class AuthService {
   constructor(private config: AuthConfig) {
@@ -19,16 +20,36 @@ export class AuthService {
         return;
       }
 
-      // Note: In a real implementation, you would:
-      // 1. Fetch user from database
-      // 2. Verify password with bcrypt.compare
-      // This is a simplified example
+      // Fetch user including password field (excluded by default via select: false)
+      const user = await UserModel.findOne({
+        email: email.toLowerCase(),
+        isActive: true,
+      }).select('+password');
 
-      const token = this.generateToken({ id: '1', email });
+      // Use a generic message to prevent user enumeration
+      if (!user) {
+        res.status(401).json({ error: 'Invalid credentials' });
+        return;
+      }
+
+      const isPasswordValid = await user.comparePassword(password);
+      if (!isPasswordValid) {
+        res.status(401).json({ error: 'Invalid credentials' });
+        return;
+      }
+
+      user.lastLogin = new Date();
+      await user.save();
+
+      const token = this.generateToken({
+        id: user.id,
+        email: user.email,
+        roles: user.roles,
+      });
 
       res.json({
         token,
-        user: { email },
+        user: { id: user.id, email: user.email, name: user.name, roles: user.roles },
       });
     } catch (error) {
       res.status(500).json({ error: 'Authentication failed' });
@@ -37,30 +58,98 @@ export class AuthService {
 
   public async register(req: Request, res: Response): Promise<void> {
     try {
-      const { email, password } = req.body;
+      const { email, password, name } = req.body;
 
       if (!email || !password) {
         res.status(400).json({ error: 'Email and password are required' });
         return;
       }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const existing = await UserModel.findOne({ email: email.toLowerCase() });
+      if (existing) {
+        res.status(409).json({ error: 'Email already registered' });
+        return;
+      }
 
-      // Note: In a real implementation, you would:
-      // 1. Check if user exists
-      // 2. Save user to database
-      // This is a simplified example
+      // Password is hashed automatically via the pre-save hook in UserModel
+      const user = await UserModel.create({ email: email.toLowerCase(), password, name });
 
-      const token = this.generateToken({ id: '1', email });
+      const token = this.generateToken({
+        id: user.id,
+        email: user.email,
+        roles: user.roles,
+      });
 
       res.status(201).json({
         message: 'User registered successfully',
         token,
-        user: { email },
+        user: { id: user.id, email: user.email, name: user.name, roles: user.roles },
       });
     } catch (error) {
       res.status(500).json({ error: 'Registration failed' });
+    }
+  }
+
+  public async forgotPassword(req: Request, res: Response): Promise<void> {
+    try {
+      const { email } = req.body;
+
+      if (!email) {
+        res.status(400).json({ error: 'Email is required' });
+        return;
+      }
+
+      const user = await UserModel.findOne({ email: email.toLowerCase() });
+
+      // Always return success to prevent user enumeration
+      if (!user) {
+        res.json({ message: 'If that email exists, a reset link has been sent' });
+        return;
+      }
+
+      const resetToken = crypto.randomBytes(32).toString('hex');
+      user.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+      user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 min
+      await user.save();
+
+      // Applications should send resetToken via email; returned here for integration testing
+      res.json({
+        message: 'If that email exists, a reset link has been sent',
+        resetToken,
+      });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to process password reset' });
+    }
+  }
+
+  public async resetPassword(req: Request, res: Response): Promise<void> {
+    try {
+      const { token, password } = req.body;
+
+      if (!token || !password) {
+        res.status(400).json({ error: 'Token and new password are required' });
+        return;
+      }
+
+      const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+      const user = await UserModel.findOne({
+        passwordResetToken: hashedToken,
+        passwordResetExpires: { $gt: Date.now() },
+      });
+
+      if (!user) {
+        res.status(400).json({ error: 'Invalid or expired reset token' });
+        return;
+      }
+
+      user.password = password;
+      user.passwordResetToken = undefined;
+      user.passwordResetExpires = undefined;
+      await user.save();
+
+      res.json({ message: 'Password reset successfully' });
+    } catch (error) {
+      res.status(500).json({ error: 'Failed to reset password' });
     }
   }
 
@@ -78,7 +167,7 @@ export class AuthService {
       (req as any).user = user;
       next();
     } catch (error) {
-      res.status(403).json({ error: 'Invalid token' });
+      res.status(403).json({ error: 'Invalid or expired token' });
     }
   }
 
@@ -88,18 +177,16 @@ export class AuthService {
     });
   }
 
-  // Middleware factory for role-based authorization
   public requireRoles(roles: string[]) {
     return (req: Request, res: Response, next: NextFunction) => {
       const user = (req as any).user as AuthUser;
 
-      if (!user.roles) {
+      if (!user?.roles) {
         res.status(403).json({ error: 'User has no roles assigned' });
         return;
       }
 
       const hasRequiredRole = roles.some((role) => user.roles?.includes(role));
-
       if (!hasRequiredRole) {
         res.status(403).json({ error: 'Insufficient permissions' });
         return;
@@ -110,12 +197,10 @@ export class AuthService {
   }
 }
 
-// Export factory function
 export const createAuthService = (config: AuthConfig): AuthService => {
   return new AuthService(config);
 };
 
-// Export middleware factory
 export const createAuthMiddleware = (authService: AuthService) => {
   return authService.authenticateToken.bind(authService);
 };

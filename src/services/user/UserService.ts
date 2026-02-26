@@ -1,136 +1,114 @@
 import { Request, Response } from 'express';
+import { UserModel } from '../auth/UserModel';
 
-/**
- * Example User Service
- * This demonstrates how to create a service in StellarJS
- */
 export class UserService {
-  private users: Map<string, any>;
-
-  constructor() {
-    this.users = new Map();
-    // Add some sample users
-    this.users.set('1', { id: '1', name: 'John Doe', email: 'john@example.com' });
-    this.users.set('2', { id: '2', name: 'Jane Smith', email: 'jane@example.com' });
-  }
-
-  /**
-   * Get all users
-   */
   async getUsers(req: Request, res: Response): Promise<void> {
     try {
-      const users = Array.from(this.users.values());
-      res.json({ success: true, data: users });
-    } catch (error) {
-      res.status(500).json({
-        error: { message: 'Failed to fetch users' },
+      const { page = '1', limit = '20', search } = req.query;
+      const skip = (Number(page) - 1) * Number(limit);
+
+      const query = search
+        ? {
+            $or: [
+              { name: new RegExp(String(search), 'i') },
+              { email: new RegExp(String(search), 'i') },
+            ],
+          }
+        : {};
+
+      const [users, total] = await Promise.all([
+        UserModel.find(query).skip(skip).limit(Number(limit)),
+        UserModel.countDocuments(query),
+      ]);
+
+      res.json({
+        success: true,
+        data: users,
+        pagination: { page: Number(page), limit: Number(limit), total },
       });
+    } catch (error) {
+      res.status(500).json({ error: { message: 'Failed to fetch users' } });
     }
   }
 
-  /**
-   * Get user by ID
-   */
   async getUserById(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-      const user = this.users.get(id);
+      const user = await UserModel.findById(req.params.id);
+      if (!user) {
+        res.status(404).json({ error: { message: 'User not found' } });
+        return;
+      }
+      res.json({ success: true, data: user });
+    } catch (error) {
+      res.status(500).json({ error: { message: 'Failed to fetch user' } });
+    }
+  }
+
+  async createUser(req: Request, res: Response): Promise<void> {
+    try {
+      const { name, email, password, roles } = req.body;
+
+      if (!email || !password) {
+        res.status(400).json({ error: { message: 'Email and password are required' } });
+        return;
+      }
+
+      const existing = await UserModel.findOne({ email: email.toLowerCase() });
+      if (existing) {
+        res.status(409).json({ error: { message: 'Email already registered' } });
+        return;
+      }
+
+      const user = await UserModel.create({
+        email: email.toLowerCase(),
+        password,
+        name,
+        roles,
+      });
+
+      res.status(201).json({ success: true, data: user });
+    } catch (error) {
+      res.status(500).json({ error: { message: 'Failed to create user' } });
+    }
+  }
+
+  async updateUser(req: Request, res: Response): Promise<void> {
+    try {
+      const updates = { ...req.body };
+      // Prevent changing password or email through this endpoint
+      delete updates.password;
+      delete updates.email;
+
+      const user = await UserModel.findByIdAndUpdate(req.params.id, updates, {
+        new: true,
+        runValidators: true,
+      });
 
       if (!user) {
-        res.status(404).json({
-          error: { message: 'User not found' },
-        });
+        res.status(404).json({ error: { message: 'User not found' } });
         return;
       }
 
       res.json({ success: true, data: user });
     } catch (error) {
-      res.status(500).json({
-        error: { message: 'Failed to fetch user' },
-      });
+      res.status(500).json({ error: { message: 'Failed to update user' } });
     }
   }
 
-  /**
-   * Create new user
-   */
-  async createUser(req: Request, res: Response): Promise<void> {
-    try {
-      const { name, email } = req.body;
-
-      if (!name || !email) {
-        res.status(400).json({
-          error: { message: 'Name and email are required' },
-        });
-        return;
-      }
-
-      const id = String(this.users.size + 1);
-      const user = { id, name, email };
-      this.users.set(id, user);
-
-      res.status(201).json({ success: true, data: user });
-    } catch (error) {
-      res.status(500).json({
-        error: { message: 'Failed to create user' },
-      });
-    }
-  }
-
-  /**
-   * Update user
-   */
-  async updateUser(req: Request, res: Response): Promise<void> {
-    try {
-      const { id } = req.params;
-      const updates = req.body;
-
-      const user = this.users.get(id);
-      if (!user) {
-        res.status(404).json({
-          error: { message: 'User not found' },
-        });
-        return;
-      }
-
-      const updatedUser = { ...user, ...updates, id };
-      this.users.set(id, updatedUser);
-
-      res.json({ success: true, data: updatedUser });
-    } catch (error) {
-      res.status(500).json({
-        error: { message: 'Failed to update user' },
-      });
-    }
-  }
-
-  /**
-   * Delete user
-   */
   async deleteUser(req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params;
-
-      if (!this.users.has(id)) {
-        res.status(404).json({
-          error: { message: 'User not found' },
-        });
+      const user = await UserModel.findByIdAndDelete(req.params.id);
+      if (!user) {
+        res.status(404).json({ error: { message: 'User not found' } });
         return;
       }
-
-      this.users.delete(id);
       res.status(204).send();
     } catch (error) {
-      res.status(500).json({
-        error: { message: 'Failed to delete user' },
-      });
+      res.status(500).json({ error: { message: 'Failed to delete user' } });
     }
   }
 }
 
-/**
- * Export factory function
- */
 export const createUserService = (): UserService => {
   return new UserService();
 };
