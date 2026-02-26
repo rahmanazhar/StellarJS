@@ -1,6 +1,6 @@
 {
   "name": "@rahmanazhar/stellar-js",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A modern fullstack JavaScript framework combining React with microservices architecture",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -62,6 +62,15 @@
     "webpack-dev-server": "^4.15.1",
     "xss-clean": "^0.1.4"
   },
+  "optionalDependencies": {
+    "@anthropic-ai/sdk": "^0.30.0",
+    "bullmq": "^5.0.0",
+    "ioredis": "^5.3.2",
+    "openai": "^4.65.0",
+    "sharp": "^0.33.0",
+    "socket.io": "^4.7.0",
+    "socket.io-client": "^4.7.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
     "@commitlint/config-conventional": "^17.6.6",
@@ -84,6 +93,7 @@
     "@types/node": "^20.3.2",
     "@types/react": "^18.2.14",
     "@types/react-dom": "^18.2.6",
+    "@types/sharp": "^0.31.1",
     "@types/validator": "^13.11.7",
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",

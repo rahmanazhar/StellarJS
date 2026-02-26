@@ -10,6 +10,8 @@ const {
   deployToEnvironment,
   uploadToServer,
 } = require('./commands/deployment-utils');
+const { generateClient } = require('./commands/generate-client');
+const { edgeDeploy } = require('./commands/edge-deploy');
 const { version } = require('../package.json');
 
 // Configure CLI
@@ -158,6 +160,40 @@ program
       await uploadToServer(options);
     } catch (error) {
       console.error(chalk.red('\nError uploading files:'), error.message);
+      process.exit(1);
+    }
+  });
+
+// Generate typed API client
+program
+  .command('generate:client')
+  .description('Generate a fully-typed TypeScript API client from your registered routes')
+  .option('-o, --out <path>', 'Output file path', 'src/stellar-client.ts')
+  .option('-m, --manifest <path>', 'Route manifest file', '.stellar/routes.json')
+  .option('-b, --base-url <url>', 'Default base URL for the client')
+  .action(async (options) => {
+    try {
+      await generateClient(options);
+    } catch (error) {
+      console.error(chalk.red('\nError generating client:'), error.message);
+      process.exit(1);
+    }
+  });
+
+// Edge / cloud deployment config generation
+program
+  .command('deploy:edge <target>')
+  .description(
+    'Generate edge/cloud deployment config (vercel, cloudflare, aws-lambda, docker, fly)'
+  )
+  .option('-d, --domain <domain>', 'Domain name for deployment')
+  .option('-p, --port <port>', 'Port to expose', '3000')
+  .option('-r, --region <region>', 'Target region (for fly.io)', 'iad')
+  .action(async (target, options) => {
+    try {
+      await edgeDeploy(target, options);
+    } catch (error) {
+      console.error(chalk.red('\nError generating edge config:'), error.message);
       process.exit(1);
     }
   });
