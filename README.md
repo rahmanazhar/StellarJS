@@ -1,8 +1,8 @@
 # StellarJS Framework
 
 <div align="center">
-  <h1>⭐ StellarJS</h1>
-  <p><strong>A modern fullstack JavaScript framework combining React with microservices architecture</strong></p>
+  <h1>StellarJS</h1>
+  <p><strong>A fullstack JavaScript framework combining React with Express microservices</strong></p>
   <p>
     <a href="https://github.com/rahmanazhar/StellarJS/blob/main/LICENSE">
       <img src="https://img.shields.io/github/license/rahmanazhar/StellarJS" alt="License">
@@ -16,25 +16,26 @@
   </p>
 </div>
 
-## ✨ Features
+## Features
 
-- 🚀 **Integrated Frontend & Backend**: Seamlessly combine React frontend with Express-based microservices
-- 🔒 **Enterprise-Grade Security**: Production-ready security with Helmet, rate limiting, XSS protection, CSRF tokens, and input sanitization
-- 🌐 **Advanced CORS Management**: Flexible CORS configuration with whitelist, dynamic origins, and preset configurations
-- 🛡️ **Input Validation**: Schema-based validation with Joi, automatic sanitization, and file upload validation
-- 🔑 **Multiple Auth Options**: JWT authentication, API key validation, and role-based access control
-- 📊 **Audit Logging**: Comprehensive audit trail for security events, authentication, and data access
-- ⚡️ **Built-in Authentication**: Ready-to-use authentication service with JWT support and password policies
-- 🎯 **TypeScript Support**: First-class TypeScript support out of the box
-- 🔄 **Custom Hooks**: Powerful hooks for service integration and state management
-- 🛠 **CLI Tools**: Efficient development workflow with project scaffolding and code generation
-- 📦 **Microservices Architecture**: Built-in support for microservices development
-- 🎨 **Customizable**: Flexible configuration and extensible architecture
+- **Integrated Frontend & Backend** — React frontend + Express server in one package
+- **Built-in Authentication** — MongoDB-backed login/register with bcrypt hashing, JWT tokens, password reset, and role-based access control
+- **Microservices Architecture** — `ServiceRegistry` for service discovery and `InterServiceClient` for service-to-service HTTP calls with retries
+- **Enterprise Security** — Helmet, rate limiting, XSS protection, NoSQL injection prevention, HPP, CORS, and input sanitization via Joi
+- **Audit Logging** — Queryable audit trail for authentication, data access, and security events
+- **CLI Tools** — Scaffold projects and generate components/services from the terminal
+- **TypeScript** — First-class TypeScript support with full type exports
+- **Custom Hooks** — `useService` and `useStellarPhp` for data fetching and state management
 
-## 📦 Installation
+## Requirements
+
+- Node.js >= 14
+- MongoDB (required for `AuthService` and `UserService`)
+
+## Installation
 
 ```bash
-# Create a new project using npx (recommended)
+# Create a new project (recommended)
 npx @rahmanazhar/stellar-js create my-app
 
 # Or install globally
@@ -42,41 +43,37 @@ npm install -g @rahmanazhar/stellar-js
 stellar create my-app
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# Create a new StellarJS project
 npx @rahmanazhar/stellar-js create my-app
-
-# Navigate to project directory
 cd my-app
-
-# Start development server
 npm run dev
 ```
 
-Visit [http://localhost:3001](http://localhost:3001) to see your app in action!
+Frontend runs at `http://localhost:3001`, backend at `http://localhost:3000`.
 
-### Secure by Default
-
-StellarJS v1.0.0 comes with enterprise-grade security enabled out of the box:
+## Server Setup
 
 ```typescript
-import { createServer } from '@rahmanazhar/stellar-js';
+import { createServer, initDatabase } from '@rahmanazhar/stellar-js';
+
+// Connect MongoDB first
+await initDatabase({ uri: process.env.MONGODB_URI! });
 
 const server = createServer({
   port: 3000,
   auth: {
     jwtSecret: process.env.JWT_SECRET!,
+    tokenExpiration: '24h',
   },
-  // Security features enabled by default!
   security: {
-    helmet: true, // Security headers
-    rateLimit: true, // Rate limiting (100 req/15min)
-    xss: true, // XSS protection
-    noSqlInjection: true, // NoSQL injection prevention
-    hpp: true, // HTTP Parameter Pollution protection
-    sanitization: true, // Automatic input sanitization
+    helmet: true,
+    rateLimit: true,
+    xss: true,
+    noSqlInjection: true,
+    hpp: true,
+    sanitization: true,
   },
   cors: {
     origins: ['https://yourdomain.com'],
@@ -87,45 +84,102 @@ const server = createServer({
 await server.start();
 ```
 
-See [Security Documentation](./docs/SECURITY.md) for advanced configurations.
+## Authentication
 
-## 📚 Documentation
-
-For detailed documentation, visit our [Documentation Site](https://stellarjs.dev):
-
-- [Getting Started Guide](https://stellarjs.dev/guide/getting-started)
-- [Core Concepts](https://stellarjs.dev/guide/architecture)
-- [API Reference](https://stellarjs.dev/api/)
-- [Examples](https://stellarjs.dev/examples/)
-
-## 🌟 Example Usage
-
-### Service Definition
+`AuthService` uses MongoDB (`UserModel`) for all operations. No stubs — passwords are bcrypt-hashed, tokens are JWT-signed.
 
 ```typescript
-// Define your service
-class UserService {
-  async getUsers() {
-    return [
-      { id: 1, name: 'John Doe' },
-      { id: 2, name: 'Jane Smith' },
-    ];
-  }
-}
+import { createServer, createAuthService, initDatabase } from '@rahmanazhar/stellar-js';
+
+await initDatabase({ uri: process.env.MONGODB_URI! });
+
+const server = createServer({ port: 3000, auth: { jwtSecret: process.env.JWT_SECRET! } });
+const auth = createAuthService({ jwtSecret: process.env.JWT_SECRET! });
+
+server.registerService({
+  name: 'auth',
+  routes: [
+    { path: '/login', method: 'POST', handler: auth.login.bind(auth) },
+    { path: '/register', method: 'POST', handler: auth.register.bind(auth) },
+    { path: '/forgot-password', method: 'POST', handler: auth.forgotPassword.bind(auth) },
+    { path: '/reset-password', method: 'POST', handler: auth.resetPassword.bind(auth) },
+  ],
+});
+
+// Protect a route
+server.registerService({
+  name: 'profile',
+  routes: [
+    {
+      path: '/me',
+      method: 'GET',
+      middleware: [auth.authenticateToken.bind(auth)],
+      handler: (req, res) => res.json({ user: (req as any).user }),
+    },
+  ],
+});
 ```
 
-### React Component
+### Auth endpoints
+
+| Method | Path                        | Description                        |
+| ------ | --------------------------- | ---------------------------------- |
+| `POST` | `/api/auth/login`           | Returns JWT + user object          |
+| `POST` | `/api/auth/register`        | Creates user, returns JWT          |
+| `POST` | `/api/auth/forgot-password` | Issues a 10-min reset token        |
+| `POST` | `/api/auth/reset-password`  | Validates token, sets new password |
+
+## Microservices
 
 ```typescript
-// Use in components
+import {
+  initServiceRegistry,
+  createInterServiceClient,
+  createServer,
+} from '@rahmanazhar/stellar-js';
+
+// Register services on startup
+const registry = initServiceRegistry();
+registry.register({ name: 'payments', version: '1.0.0', host: 'localhost', port: 4001 });
+registry.register({ name: 'notifications', version: '1.0.0', host: 'localhost', port: 4002 });
+
+// Call another service from a route handler
+const client = createInterServiceClient(registry);
+
+server.registerService({
+  name: 'orders',
+  routes: [
+    {
+      path: '/',
+      method: 'POST',
+      handler: async (req, res) => {
+        const order = req.body;
+        // Inter-service call with automatic retries
+        await client.post('payments', '/api/charge', { amount: order.total });
+        await client.post('notifications', '/api/email', { to: order.email });
+        res.status(201).json({ order });
+      },
+    },
+  ],
+});
+```
+
+The registry periodically health-checks each registered service (`GET /health`) and marks unhealthy instances so `InterServiceClient` can skip them.
+
+## React Hooks
+
+```typescript
+import { useService } from '@rahmanazhar/stellar-js';
+
 function UserList() {
-  const { data, loading } = useService('user', 'getUsers');
+  const { data, loading, error } = useService('user', 'getUsers', { immediate: true });
 
   if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
 
   return (
     <ul>
-      {data.map((user) => (
+      {data?.map((user: any) => (
         <li key={user.id}>{user.name}</li>
       ))}
     </ul>
@@ -133,70 +187,68 @@ function UserList() {
 }
 ```
 
-## 🛠 CLI Commands
+## CLI Commands
 
 ```bash
-# Create new project
+# Scaffold a new project
 stellar create my-app
+stellar create my-app --typescript
 
-# Generate components/services
+# Generate files
 stellar generate component UserList
-stellar generate service User
+stellar generate component UserList --php   # with PHP API client
+stellar generate service  Payments
 
 # Development
-stellar dev
+stellar dev               # starts frontend (port 3001) + backend (port 3000)
+stellar dev --port 4000   # custom port
 
-# Production build
+# Production
 stellar build
+stellar deploy apache  --domain example.com
+stellar deploy nginx   --domain example.com
 ```
 
-## 🤝 Contributing
+## Security
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+All security features are enabled when `NODE_ENV=production` with no configuration required:
+
+| Feature                    | Default (prod) | Description                             |
+| -------------------------- | -------------- | --------------------------------------- |
+| Helmet                     | on             | Secure HTTP headers                     |
+| Rate limiting              | on             | 100 req / 15 min per IP                 |
+| XSS protection             | on             | Sanitize request bodies                 |
+| NoSQL injection prevention | on             | Strip `$` and `.` from inputs           |
+| HPP                        | on             | HTTP Parameter Pollution protection     |
+| Input sanitization         | on             | Whitespace trim and encoding            |
+| CORS                       | configurable   | Whitelist, wildcard, or dynamic origins |
+
+See [docs/SECURITY.md](./docs/SECURITY.md) for advanced configuration.
+
+## User Model
+
+`UserModel` is a Mongoose model exported directly for use in your own code:
+
+```typescript
+import { UserModel } from '@rahmanazhar/stellar-js';
+
+const user = await UserModel.findOne({ email: 'user@example.com' });
+const allAdmins = await UserModel.find({ roles: 'admin' });
+```
+
+Fields: `email`, `name`, `roles` (default `['user']`), `isActive`, `lastLogin`, `passwordResetToken`, `passwordResetExpires`, `createdAt`, `updatedAt`.
+Password is always `select: false` — use `user.comparePassword(candidate)` to verify.
+
+## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+2. Create a feature branch (`git checkout -b feature/my-feature`)
+3. Commit using [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, etc.)
+4. Open a Pull Request
 
-## 💬 Community
+See [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines.
 
-- [GitHub Discussions](https://github.com/rahmanazhar/StellarJS/discussions)
-- [Discord Server](https://discord.gg/stellarjs)
-- [Twitter](https://twitter.com/StellarJSdev)
+## License
 
-## � Security
-
-StellarJS takes security seriously. Version 1.0.0 includes:
-
-- ✅ **Helmet** - Secure HTTP headers
-- ✅ **Rate Limiting** - Prevent brute force attacks
-- ✅ **XSS Protection** - Sanitize inputs
-- ✅ **NoSQL Injection Prevention** - Protect your database
-- ✅ **CORS** - Flexible cross-origin configuration
-- ✅ **Input Validation** - Schema-based with Joi
-- ✅ **Audit Logging** - Track all security events
-- ✅ **API Key Authentication** - Secure service-to-service communication
-
-See [Security Documentation](./docs/SECURITY.md) for details.
-
-## 📊 What's New in v1.0.0
-
-🎉 **Major Release** - Production ready with enterprise-grade security!
-
-- 🔒 Comprehensive security middleware (Helmet, XSS, rate limiting, etc.)
-- 🌐 Advanced CORS management with presets and dynamic validation
-- 🛡️ Schema-based validation with Joi
-- 🔑 Multiple authentication strategies (JWT, API keys, RBAC)
-- 📊 Audit logging system with queryable events
-- 🔐 Security utilities (encryption, hashing, token generation)
-- ⚡ Performance optimized with minimal overhead
-- 📚 Extensive documentation and examples
-
-See [CHANGELOG.md](./CHANGELOG.md) for complete details.
-
-## �📝 License
-
-Copyright © 2023 [Rahman Azhar](https://github.com/rahmanazhar).
-This project is [MIT](LICENSE) licensed.
+Copyright © 2024 [Rahman Azhar](https://github.com/rahmanazhar).
+MIT licensed — see [LICENSE](LICENSE).
