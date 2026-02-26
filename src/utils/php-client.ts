@@ -1,11 +1,10 @@
-import React from 'react';
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 export interface StellarPhpConfig {
   baseURL: string;
@@ -221,14 +220,16 @@ export function useStellarPhp(config?: Partial<StellarPhpConfig>) {
     timeout: 10000,
   };
 
-  const client = new StellarPhpClient({ ...defaultConfig, ...config });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const client = useMemo(() => new StellarPhpClient({ ...defaultConfig, ...config }), []);
 
   // Restore auth token on initialization
   useEffect(() => {
     const token = localStorage.getItem('stellar_auth_token');
-    const type = localStorage.getItem('stellar_auth_type') as 'Bearer' | 'Basic';
+    const storedType = localStorage.getItem('stellar_auth_type');
+    const type: 'Bearer' | 'Basic' = storedType === 'Basic' ? 'Basic' : 'Bearer';
     if (token) {
-      client.setAuthToken(token, type || 'Bearer');
+      client.setAuthToken(token, type);
     }
   }, [client]);
 

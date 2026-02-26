@@ -136,6 +136,7 @@ export const maskSensitiveData = (data: string, visibleChars = 4): string => {
  * Mask email address
  */
 export const maskEmail = (email: string): string => {
+  if (!email) return '';
   const [local, domain] = email.split('@');
   if (!domain) return maskSensitiveData(email);
 

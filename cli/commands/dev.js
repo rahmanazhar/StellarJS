@@ -2,7 +2,7 @@ const path = require('path');
 const chalk = require('chalk');
 const webpack = require('webpack');
 const WebpackDevServer = require('webpack-dev-server');
-const { createServer } = require('../../src/server/StellarServer');
+const { createServer } = require('../../dist/server/StellarServer');
 const ora = require('ora');
 
 async function startDevServer(options) {

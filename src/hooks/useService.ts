@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useStellar } from '../core/StellarProvider';
 import { ServiceResponse } from '../types';
 
@@ -26,6 +26,8 @@ export function useService<T = any>(
     loading: false,
   });
 
+  const { onSuccess, onError, immediate } = options;
+
   const execute = useCallback(
     async (...args: any[]): Promise<ServiceResponse<T>> => {
       try {
@@ -44,27 +46,28 @@ export function useService<T = any>(
 
         setState((prev) => ({ ...prev, data: result.data, loading: false }));
 
-        options.onSuccess?.(result.data);
+        onSuccess?.(result.data);
 
         return result;
       } catch (error) {
         const errorObj = error instanceof Error ? error : new Error(String(error));
         setState((prev) => ({ ...prev, error: errorObj, loading: false }));
 
-        options.onError?.(errorObj);
+        onError?.(errorObj);
 
         throw errorObj;
       }
     },
-    [serviceName, method, config.services, options]
+    [serviceName, method, config.services, onSuccess, onError]
   );
 
-  // Handle immediate execution if specified
-  useState(() => {
-    if (options.immediate) {
+  // Handle immediate execution on mount
+  useEffect(() => {
+    if (immediate) {
       execute();
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return {
     ...state,
