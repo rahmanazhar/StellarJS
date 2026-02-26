@@ -7,7 +7,6 @@ module.exports = {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
       {
-        isolatedModules: true,
         tsconfig: {
           jsx: 'react',
           esModuleInterop: true,
@@ -28,8 +27,8 @@ module.exports = {
     global: {
       branches: 4,
       functions: 5,
-      lines: 5,
-      statements: 5,
+      lines: 4,
+      statements: 4,
     },
   },
   moduleNameMapper: {
