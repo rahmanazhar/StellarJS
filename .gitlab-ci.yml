@@ -138,8 +138,9 @@ release:
   script:
     - npm run build
     - npm run lint
-    # Run semantic-release with GitLab-specific config
-    - npx semantic-release -c .releaserc.gitlab.json
+    # Use GitLab-specific semantic-release config
+    - cp .releaserc.gitlab.json .releaserc.json
+    - npx semantic-release
   artifacts:
     paths:
       - dist/

@@ -1,5 +1,6 @@
 {
   "branches": ["main"],
+  "repositoryUrl": "https://gitlab.hiroshiaki.com/rahmanazhar/StellarJS.git",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",
@@ -59,7 +60,7 @@
     [
       "@semantic-release/gitlab",
       {
-        "gitlabUrl": "https://gitlab.com",
+        "gitlabUrl": "https://gitlab.hiroshiaki.com",
         "assets": [
           {
             "path": "dist-package/*.tgz",
