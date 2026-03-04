@@ -133,14 +133,14 @@ release:
     # Configure git for semantic-release
     - git config --global user.email "ci@gitlab.com"
     - git config --global user.name "GitLab CI"
-    # Set up git credentials for pushing tags and commits
-    - git remote set-url origin https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git
+    # Set up git credentials for pushing tags and commits (requires GITLAB_TOKEN CI variable)
+    - git remote set-url origin "https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
   script:
     - npm run build
     - npm run lint
     # Use GitLab-specific semantic-release config
     - cp .releaserc.gitlab.json .releaserc.json
-    - npx semantic-release --repository-url "https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+    - GL_TOKEN=${GITLAB_TOKEN} npx semantic-release --repository-url "https://gitlab-ci-token:${GITLAB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
   artifacts:
     paths:
       - dist/
