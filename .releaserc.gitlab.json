@@ -1,6 +1,5 @@
 {
   "branches": ["main"],
-  "repositoryUrl": "https://gitlab.hiroshiaki.com/rahmanazhar/StellarJS.git",
   "plugins": [
     [
       "@semantic-release/commit-analyzer",

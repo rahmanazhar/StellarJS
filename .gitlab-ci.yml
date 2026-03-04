@@ -140,7 +140,7 @@ release:
     - npm run lint
     # Use GitLab-specific semantic-release config
     - cp .releaserc.gitlab.json .releaserc.json
-    - npx semantic-release
+    - npx semantic-release --repository-url "https://oauth2:${CI_JOB_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
   artifacts:
     paths:
       - dist/
